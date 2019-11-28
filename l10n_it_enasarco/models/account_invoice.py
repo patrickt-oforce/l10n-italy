@@ -61,7 +61,7 @@ class AccountInvoice(models.Model):
         """ Create Enasarco moves """
         res = super().action_invoice_open()
         self.check_enasarco_config()
-        for inv in self.filtered(self.needs_enasarco_move):
+        for inv in self.filtered(type(self).needs_enasarco_move):
             inv.set_enasarco_move()
             inv.reconcile_enasarco_move_lines()
         return res
