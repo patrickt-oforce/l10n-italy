@@ -1,3 +1,7 @@
+/*
+License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
+*/
+
 odoo.define('l10n_it_enasarco.enasarco_payment', function (require) {
     "use strict";
 
