@@ -1,6 +1,6 @@
 # Copyright 2018 Alessandro Camilli <alessandrocamilli@openforce.it>
 # Copyright 2019 Silvio Gregorini <silviogregorini@openforce.it>
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
 {
     'name': 'ITA - Enasarco',
@@ -9,7 +9,7 @@
     'summary': "Gestione Enasarco su fatture",
     'author': 'Openforce',
     'website': 'https://github.com/OCA/l10n-italy/tree/11.0/l10n_it_enasarco',
-    'license': 'AGPL-3',
+    'license': 'LGPL-3',
     'depends': [
         'account',
         'l10n_it_withholding_tax'
