@@ -17,7 +17,6 @@
     'data': [
         'views/res_config_setting.xml',
         'views/account_invoice_view.xml',
-        'views/enasarco.xml',
     ],
     'qweb': [
         'static/src/xml/account_payment.xml',
