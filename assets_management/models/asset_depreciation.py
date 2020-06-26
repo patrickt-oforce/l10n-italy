@@ -433,11 +433,11 @@ class AssetDepreciation(models.Model):
             )
 
         if self.pro_rata_temporis:
-            dt_range = self.env['date.range']
-            fy_start = dt_range.get_fiscal_year_by_date(
+            fiscal_year_obj = self.env['account.fiscal.year']
+            fy_start = fiscal_year_obj.get_fiscal_year_by_date(
                 date_start, company=self.company_id
             )
-            fy_dep = dt_range.get_fiscal_year_by_date(
+            fy_dep = fiscal_year_obj.get_fiscal_year_by_date(
                 dep_date, company=self.company_id
             )
             if fy_dep == fy_start:
@@ -445,8 +445,8 @@ class AssetDepreciation(models.Model):
                 # which the asset was registered, compute multiplier as a
                 # difference from date_dep multiplier and start_date
                 # multiplier, plus 1/lapse to avoid "skipping" one day
-                fy_end = fields.Date.from_string(fy_dep.date_end)
-                fy_start = fields.Date.from_string(fy_dep.date_start)
+                fy_end = fields.Date.from_string(fy_dep.date_to)
+                fy_start = fields.Date.from_string(fy_dep.date_from)
                 lapse = (fy_end - fy_start).days + 1
                 dep_multiplier = self.get_pro_rata_temporis_multiplier(
                     dep_date, 'dte'
@@ -531,8 +531,8 @@ class AssetDepreciation(models.Model):
                 _("Cannot compute pro rata temporis for unknown date.")
             )
 
-        dt_range = self.env['date.range']
-        fiscal_year = dt_range.get_fiscal_year_by_date(
+        fiscal_year_obj = self.env['account.fiscal.year']
+        fiscal_year = fiscal_year_obj.get_fiscal_year_by_date(
             date, company=self.company_id
         )
         if not fiscal_year:
@@ -542,9 +542,9 @@ class AssetDepreciation(models.Model):
             )
 
         return (
-            fields.Date.from_string(fiscal_year.date_start),
+            fields.Date.from_string(fiscal_year.date_from),
             fields.Date.from_string(date),
-            fields.Date.from_string(fiscal_year.date_end)
+            fields.Date.from_string(fiscal_year.date_to)
         )
 
     def get_pro_rata_temporis_multiplier(self, date=None, mode='std'):

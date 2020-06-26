@@ -210,10 +210,10 @@ class Report(models.TransientModel):
             )
 
         dep_lines_grouped = OrderedDict()
-        dt_range = self.env['date.range']
+        fiscal_year = self.env['account.fiscal.year']
         for dep_line in dep_lines.sorted('date'):
             dep = dep_line.depreciation_id
-            fyear = dt_range.get_fiscal_year_by_date(
+            fyear = fiscal_year.get_fiscal_year_by_date(
                 dep_line.date, company=dep_line.company_id
             )
             key = (dep, fyear)
@@ -366,8 +366,8 @@ class ReportCategory(models.TransientModel):
                 dep_type = report_dep.depreciation_id.type_id
                 last_line = report_dep.report_depreciation_year_line_ids[-1]
                 line_curr = last_line.get_currency()
-                fy_start = last_line.fiscal_year_id.date_start
-                fy_end = last_line.fiscal_year_id.date_end
+                fy_start = last_line.fiscal_year_id.date_from
+                fy_end = last_line.fiscal_year_id.date_to
                 for fname in fnames:
                     if fname == 'amount_depreciation_fund_prev_year':
                         if fy_start <= report_date <= fy_end:
@@ -631,7 +631,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
     )
 
     fiscal_year_id = fields.Many2one(
-        'date.range'
+        'account.fiscal.year'
     )
 
     # Report structure fields
@@ -729,7 +729,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
         )
         asset = self.report_depreciation_id.report_asset_id.asset_id
         fy_start = self.fiscal_year_id.date_start
-        fy_end = self.fiscal_year_id.date_end
+        fy_end = self.fiscal_year_id.date_to
         if asset.sold and asset.sale_date \
                 and fy_start <= asset.sale_date <= fy_end:
             amount_depreciable_upd = 0.0
@@ -830,8 +830,8 @@ class ReportDepreciationLineByYear(models.TransientModel):
                 if vals:
                     accounting_doc_vals.append((0, 0, vals))
 
-        start = fields.Date.from_string(self.fiscal_year_id.date_start).year
-        end = fields.Date.from_string(self.fiscal_year_id.date_end).year
+        start = fields.Date.from_string(self.fiscal_year_id.date_from).year
+        end = fields.Date.from_string(self.fiscal_year_id.date_to).year
         if start == end:
             year = str(start)
         else:

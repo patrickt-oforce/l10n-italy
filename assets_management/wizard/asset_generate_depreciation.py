@@ -1,5 +1,5 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
-# Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
+# Copyright 2020 Openforce Srls Unipersonale (www.openforce.it)
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 
 from datetime import date
@@ -16,13 +16,13 @@ class WizardAssetsGenerateDepreciations(models.TransientModel):
 
     @api.model
     def get_default_date_dep(self):
-        fiscal_year = self.env['date.range'].get_fiscal_year_by_date(
+        fiscal_year = self.env['account.fiscal.year'].get_fiscal_year_by_date(
             fields.Date.today(),
             company=self.env.user.company_id,
             raise_if_missing=False
         )
         if fiscal_year:
-            return fiscal_year.date_end
+            return fiscal_year.date_to
         return fields.Date.today()
 
     @api.model

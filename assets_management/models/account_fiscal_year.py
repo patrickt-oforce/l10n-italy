@@ -1,13 +1,13 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
-# Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
+# Copyright 2020 Openforce Srls Unipersonale (www.openforce.it)
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
-class DateRange(models.Model):
-    _inherit = 'date.range'
+class AccountFiscalYear(models.Model):
+    _inherit = 'account.fiscal.year'
 
     @api.model
     def get_fiscal_year_by_date(
@@ -44,13 +44,10 @@ class DateRange(models.Model):
         Prepares a search() domain to retrieve fiscal years by given ``date``.
         """
         domain = [
-            ('date_start', '<=', date),
-            ('date_end', '>=', date),
-            ('type_id.fiscal_year', '=', True)
+            ('date_from', '<=', date),
+            ('date_to', '>=', date),
         ]
 
-        if active_type:
-            domain.append(('type_id.active', '=', True))
         if company:
             domain.append(('company_id', 'in', company.ids))
 

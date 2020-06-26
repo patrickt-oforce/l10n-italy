@@ -222,7 +222,7 @@ class Report(models.TransientModel):
             ('type_id.fiscal_year', '=', True)
         ]
         if self.date:
-            fy_domain += [('date_start', '<=', self.date)]
+            fy_domain += [('date_from', '<=', self.date)]
         # Create an ordered dict where each key is a fiscal year, sorting
         # them for starting date => every fiscal year must have its own
         # depreciation lines or previsional ones
@@ -230,17 +230,17 @@ class Report(models.TransientModel):
         dep_lines_grouped = {
             dep: OrderedDict({
                 fy: dep_line_obj
-                for fy in self.env['date.range'].search(
-                    fy_domain, order='date_start asc'
+                for fy in self.env['account.fiscal.year'].search(
+                    fy_domain, order='date_from asc'
                 )
             })
             for dep in deps
         }
 
-        dt_range = self.env['date.range']
+        fiscal_year = self.env['account.fiscal.year']
         for dep_line in dep_lines:
             dep = dep_line.depreciation_id
-            fyear = dt_range.get_fiscal_year_by_date(
+            fyear = fiscal_year.get_fiscal_year_by_date(
                 dep_line.date, company=dep_line.company_id
             )
             dep_lines_grouped[dep][fyear] += dep_line
@@ -401,7 +401,7 @@ class ReportCategory(models.TransientModel):
                 dep_type = report_dep.depreciation_id.type_id
                 last_line = report_dep.report_depreciation_year_line_ids[-1]
                 line_curr = last_line.get_currency()
-                fy_start = last_line.fiscal_year_id.date_start
+                fy_start = last_line.fiscal_year_id.date_from
                 fy_end = last_line.fiscal_year_id.date_end
                 for fname in fnames:
                     if fname == 'amount_depreciation_fund_prev_year':
@@ -666,7 +666,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
     )
 
     fiscal_year_id = fields.Many2one(
-        'date.range'
+        'account.fiscal.year'
     )
 
     # Report structure fields
@@ -791,7 +791,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
             lambda l: l.sequence == self.sequence - 1
         )
         asset = self.report_depreciation_id.report_asset_id.asset_id
-        fy_start = self.fiscal_year_id.date_start
+        fy_start = self.fiscal_year_id.date_from
         fy_end = self.fiscal_year_id.date_end
         if asset.sold and asset.sale_date \
                 and fy_start <= asset.sale_date <= fy_end:
@@ -856,7 +856,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
             ])
             has_amount_detail = True
 
-        start = fields.Date.from_string(self.fiscal_year_id.date_start).year
+        start = fields.Date.from_string(self.fiscal_year_id.date_from).year
         end = fields.Date.from_string(self.fiscal_year_id.date_end).year
         if start == end:
             year = str(start)
