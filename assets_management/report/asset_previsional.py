@@ -272,7 +272,7 @@ class Report(models.TransientModel):
             for dep, lines_by_fyear in dep_lines_grouped.items():
                 if dep == report_dep.depreciation_id:
                     for fyear, lines in lines_by_fyear.items():
-                        if fyear.date_end >= dep.date_start:
+                        if fyear.date_to >= dep.date_start:
                             prev = not lines or not any(
                                 l.move_type == 'depreciated'
                                 and not l.partial_dismissal
@@ -402,7 +402,7 @@ class ReportCategory(models.TransientModel):
                 last_line = report_dep.report_depreciation_year_line_ids[-1]
                 line_curr = last_line.get_currency()
                 fy_start = last_line.fiscal_year_id.date_from
-                fy_end = last_line.fiscal_year_id.date_end
+                fy_end = last_line.fiscal_year_id.date_to
                 for fname in fnames:
                     if fname == 'amount_depreciation_fund_prev_year':
                         if fy_start <= report_date <= fy_end:
@@ -749,7 +749,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
         self.ensure_one()
         dep = self.report_depreciation_id.depreciation_id
         previsional_lines = dep.generate_depreciation_lines(
-            self.fiscal_year_id.date_end
+            self.fiscal_year_id.date_to
         )
         self.dep_line_ids += previsional_lines
         self.report_id.previsional_line_ids += previsional_lines
@@ -792,7 +792,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
         )
         asset = self.report_depreciation_id.report_asset_id.asset_id
         fy_start = self.fiscal_year_id.date_from
-        fy_end = self.fiscal_year_id.date_end
+        fy_end = self.fiscal_year_id.date_to
         if asset.sold and asset.sale_date \
                 and fy_start <= asset.sale_date <= fy_end:
             amount_depreciable_upd = 0.0
@@ -857,7 +857,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
             has_amount_detail = True
 
         start = fields.Date.from_string(self.fiscal_year_id.date_from).year
-        end = fields.Date.from_string(self.fiscal_year_id.date_end).year
+        end = fields.Date.from_string(self.fiscal_year_id.date_to).year
         if start == end:
             year = str(start)
         else:

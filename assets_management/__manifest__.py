@@ -4,7 +4,7 @@
 
 {
     'name': 'Italian Localization - Gestione Cespiti',
-    'version': '12.0.1.0.0',
+    'version': '12.0.1.0.0+OCA1816',
     'category': 'Localization/Italy',
     'summary': "Gestione Cespiti",
     'author': 'Openforce',
