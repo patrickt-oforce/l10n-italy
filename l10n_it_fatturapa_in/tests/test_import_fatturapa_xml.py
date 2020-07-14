@@ -486,12 +486,29 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         res = self.run_wizard('test24', 'IT05979361218_012.xml')
         invoice_id = res.get('domain')[0][2][0]
         invoice = self.invoice_model.browse(invoice_id)
-        self.assertAlmostEqual(invoice.e_invoice_amount_untaxed, 34.32)
-        self.assertEqual(invoice.e_invoice_amount_tax, 0.0)
-        self.assertEqual(invoice.e_invoice_amount_total, 34.32)
+        self.assertEqual(
+            invoice.inconsistencies,
+            'Computed amount untaxed 34.32 is different from'
+            ' summary data 34.67')
 
     def test_25_xml_import(self):
         res = self.run_wizard('test25', 'IT05979361218_013.xml')
+        invoice_id = res.get('domain')[0][2][0]
+        invoice = self.invoice_model.browse(invoice_id)
+        self.assertAlmostEqual(invoice.e_invoice_amount_untaxed, 34.67)
+        self.assertEqual(invoice.e_invoice_amount_tax, 0.0)
+        self.assertEqual(invoice.e_invoice_amount_total, 34.32)
+        self.assertEqual(invoice.efatt_rounding, -0.35)
+        invoice.action_invoice_open()
+        move_line = False
+        for line in invoice.move_id.line_ids:
+            if line.account_id.id == self.env.user.\
+                    company_id.arrotondamenti_attivi_account_id.id:
+                move_line = True
+        self.assertTrue(move_line)
+
+    def test_26_xml_import(self):
+        res = self.run_wizard('test26', 'IT05979361218_015.xml')
         invoice_id = res.get('domain')[0][2][0]
         invoice = self.invoice_model.browse(invoice_id)
         self.assertAlmostEqual(invoice.e_invoice_amount_untaxed, 34.32)
@@ -559,7 +576,23 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         self.assertEqual(
             invoice.e_invoice_validation_message,
             "E-bill contains DatiRitenuta but no lines subjected to Ritenuta was "
-            "found. Please manually check Withholding tax Amount."
+            "found. Please manually check Withholding tax Amount\nE-bill contains "
+            "ImportoRitenuta 360.0 but created invoice has got 0.0\n."
+        )
+
+    def test_35_xml_import(self):
+        # creating 2350 before 2320, so odoo will use 2350 but e-invoices
+        # contains 2320: error message must appear
+        self.create_wt_23_50()
+        self.create_wt_23_20()
+        res = self.run_wizard('test35', 'IT01234567890_FPR09.xml')
+        invoice_id = res.get('domain')[0][2][0]
+        invoice = self.invoice_model.browse(invoice_id)
+        self.assertTrue(invoice.e_invoice_validation_error)
+        self.assertEqual(
+            invoice.e_invoice_validation_message,
+            "E-bill contains ImportoRitenuta 30.16 but created invoice has got "
+            "75.41\n."
         )
 
     def test_01_xml_link(self):
