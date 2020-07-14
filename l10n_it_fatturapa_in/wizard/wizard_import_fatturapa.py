@@ -126,6 +126,10 @@ class WizardImportFatturapa(models.TransientModel):
         partners = partner_model
         if vat:
             domain = [('vat', '=', vat)]
+            if len(partners) > 1:
+                partners = partners.mapped('commercial_partner_id')
+            if len(partners) > 1 and cf:
+                partners = partners.filtered(lambda p: p.fiscalcode == cf)
             if self.env.context.get('from_attachment'):
                 att = self.env.context.get('from_attachment')
                 domain.extend([
