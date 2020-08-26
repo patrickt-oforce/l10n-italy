@@ -5,7 +5,7 @@
 
 {
     'name': 'ITA - Dichiarazione Intento',
-    'version': '12.0.0.1.0+ITA1553',
+    'version': '12.0.0.1.0+ITA1553+ITA1854',
     'license': 'AGPL-3',
     'author': 'Francesco Apruzzese, Odoo Community Association (OCA), '
               'Sergio Corato, Glauco Prina',
