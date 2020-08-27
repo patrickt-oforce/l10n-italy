@@ -4,7 +4,7 @@
 
 {
     'name': 'ITA - Enasarco',
-    'version': '12.0.1.0.0',
+    'version': '12.0.1.0.1',
     'category': 'Localization/Italy',
     'summary': "Gestione Enasarco su fatture",
     'author': 'Openforce',
