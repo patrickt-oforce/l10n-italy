@@ -31,7 +31,7 @@ class AccountInvoice(models.Model):
 
     enasarco_amount_total = fields.Monetary(
         related='enasarco_amount',
-        string='Enasarco amount',
+        string='Enasarco amount Total',
     )
 
     enasarco_date = fields.Date(
