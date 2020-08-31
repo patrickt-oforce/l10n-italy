@@ -9,20 +9,7 @@ from odoo.exceptions import ValidationError
 from odoo.tools.pycompat import string_types
 from odoo.tools.safe_eval import safe_eval
 
-
-def format_amount(amount, currency):
-    """
-    Formats amount string for given amount according to currency and its
-    decimal places.
-
-    Returns a string:
-        `currency_symbol + amount` or `amount + currency.symbol`.
-    """
-    amt = format(amount, '.{}f'.format(currency.decimal_places))
-    if currency.position == 'before':
-        return '{} {}'.format(currency.symbol, amt)
-    else:
-        return '{} {}'.format(amt, currency.symbol)
+from odoo.addons.mail.models.mail_template import format_amount
 
 
 def format_date(rec, field_name, fmt):
@@ -383,6 +370,10 @@ class ReportCategory(models.TransientModel):
                                 line_curr.compute(last_line[fname], curr)
                         elif report_date < fy_start:
                             totals_by_dep_type[dep_type][fname] = 0
+                    elif fname == 'amount_depreciated':
+                        if fy_start <= report_date <= fy_end:
+                            totals_by_dep_type[dep_type][fname] += \
+                                line_curr.compute(last_line[fname], curr)
                     else:
                         totals_by_dep_type[dep_type][fname] += \
                             line_curr.compute(last_line[fname], curr)
@@ -442,7 +433,7 @@ class ReportAsset(models.TransientModel):
     def format_amount(self, amount, currency=None):
         self.ensure_one()
         currency = currency or self.get_currency()
-        return format_amount(amount, currency)
+        return format_amount(self.env, amount, currency)
 
     def generate_data(self):
         for report_asset in self:
@@ -591,7 +582,7 @@ class ReportDepreciation(models.TransientModel):
     def format_amount(self, amount, currency=None):
         self.ensure_one()
         currency = currency or self.get_currency()
-        return format_amount(amount, currency)
+        return format_amount(self.env, amount, currency)
 
     def generate_data(self):
         for report_dep in self:
@@ -679,7 +670,7 @@ class ReportDepreciationLineByYear(models.TransientModel):
     def format_amount(self, amount, currency=None):
         self.ensure_one()
         currency = currency or self.get_currency()
-        return format_amount(amount, currency)
+        return format_amount(self.env, amount, currency)
 
     def generate_data(self):
         for report_dep_line_year in self.sorted():  # Force sorting by _order
@@ -933,7 +924,7 @@ class ReportTotals(models.TransientModel):
     def format_amount(self, amount, currency=None):
         self.ensure_one()
         currency = currency or self.get_currency()
-        return format_amount(amount, currency)
+        return format_amount(self.env, amount, currency)
 
     def get_currency(self):
         self.ensure_one()
