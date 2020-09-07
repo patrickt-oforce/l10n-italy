@@ -3,12 +3,12 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
 
 {
-    'name': 'Italian Localization - Gestione Cespiti',
-    'version': '12.0.1.0.0+OCA1816',
+    'name': 'ITA - Gestione Cespiti',
+    'version': '12.0.1.0.0+OCA1858',
     'category': 'Localization/Italy',
     'summary': "Gestione Cespiti",
     'author': 'Openforce',
-    # 'website': 'https://github.com/OCA/l10n-italy/tree/12.0/assets_management',
+    'website': 'https://github.com/OCA/l10n-italy/tree/12.0/assets_management',
     'license': 'LGPL-3',
     'depends': [
         'account',

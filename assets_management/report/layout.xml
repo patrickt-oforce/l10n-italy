@@ -22,7 +22,7 @@
                     <br/>
                     <span t-esc="company.zip" class=""/> - <span t-esc="company.city" class=""/> - <span t-esc="company.state_id.code" class=""/>
                     <br/>
-                    <span class="text-right">TIN: </span><span t-esc="company.partner_id.vat" class=""/>
+                    <span class="text-right"><t t-esc="company.country_id.vat_label or 'TIN'"/>: </span><span t-esc="company.partner_id.vat" class=""/>
                     <br/>
                 </div>
             </div>
