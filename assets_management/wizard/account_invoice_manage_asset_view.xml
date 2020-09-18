@@ -138,7 +138,7 @@
                                        readonly="1"/>
                                 <field name="uom_id"
                                        options="{'no_open':1}"
-                                       groups="product.group_uom"
+                                       groups="uom.group_uom"
                                        readonly="1"/>
                                 <field name="price_unit"
                                        readonly="1"/>
