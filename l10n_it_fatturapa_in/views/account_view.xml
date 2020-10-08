@@ -29,6 +29,7 @@
                             <field name="e_invoice_received_date"/>
                             <field name="registered"/>
                             <field name="invoices_total"/>
+                            <field name="invoices_date"/>
                         </group>
                     </group>
                     <notebook>
@@ -73,6 +74,7 @@
                 <field name="create_date"/>
                 <field name="xml_supplier_id"/>
                 <field name="invoices_number"/>
+                <field name="invoices_date"/>
                 <field name="registered"/>
                 <field name="in_invoice_ids"/>
             </tree>
@@ -277,6 +279,14 @@
                                 <field name="welfare_taxable"></field>
                                 <field name="subjected_withholding"></field>
                                 <field name="pa_line_code"></field>
+                            </tree>
+                        </field>
+                    </group>
+                    <group string="Withholding">
+                        <field name="ftpa_withholding_ids" nolabel="1" readonly="1">
+                            <tree editable="bottom" string="Withholding Details">
+                                <field name="name"/>
+                                <field name="amount"/>
                             </tree>
                         </field>
                     </group>
