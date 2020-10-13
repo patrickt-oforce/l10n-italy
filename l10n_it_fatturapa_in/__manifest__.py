@@ -6,7 +6,7 @@
 
 {
     'name': 'ITA - Fattura elettronica - Ricezione',
-    'version': '12.0.2.0.0+PR1676+IS1828+PR1914',
+    'version': '12.0.2.0.0+PR1676+IS1828+PR1914+PR1917',
     "development_status": "Beta",
     'category': 'Localization/Italy',
     'summary': 'Ricezione fatture elettroniche',
