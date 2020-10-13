@@ -943,7 +943,6 @@ class WizardImportFatturapa(models.TransientModel):
         invoice_id = invoice.id
 
         self.set_vendor_bill_data(FatturaBody, invoice)
-        import pdb;pdb.set_trace()
         # 2.1.1.7
         self.set_welfares_fund(
             FatturaBody, credit_account_id, invoice, wt_founds)
