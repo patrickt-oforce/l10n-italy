@@ -7,7 +7,7 @@
 
 {
     'name': 'Italian Localization - Imposta di bollo',
-    'version': '12.0.1.1.1+PR1645+PR1896',
+    'version': '12.0.1.1.2+PR1896',
     'category': 'Localization/Italy',
     'summary': "Gestione automatica dell'imposta di bollo",
     'author': 'Ermanno Gnan, Sergio Corato, Enrico Ganzaroli, '
