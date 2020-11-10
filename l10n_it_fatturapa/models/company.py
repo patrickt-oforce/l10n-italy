@@ -33,6 +33,10 @@ class ResCompany(models.Model):
         string='Preview Format Style', required=True,
         default='fatturaordinaria_v1.2.1.xsl')
 
+    phone_electronic_invoice = fields.Char(
+        string="Phone for Electronic Invoice"
+    )
+
 
 class AccountConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -110,6 +114,11 @@ class AccountConfigSettings(models.TransientModel):
         default='fatturaordinaria_v1.2.1.xsl',
         readonly=False
         )
+
+    phone_electronic_invoice = fields.Char(
+        related='company_id.phone_electronic_invoice',
+        readonly=False,
+    )
 
     @api.onchange('company_id')
     def onchange_company_id(self):
