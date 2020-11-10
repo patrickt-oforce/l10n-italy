@@ -191,7 +191,8 @@ class WizardExportFatturapa(models.TransientModel):
         return True
 
     def _setContattiTrasmittente(self, company, fatturapa):
-        Telefono = company.phone
+        Telefono = company.phone_electronic_invoice if \
+            company.phone_electronic_invoice else company.phone
         Email = company.email
         fatturapa.FatturaElettronicaHeader.DatiTrasmissione.\
             ContattiTrasmittente = ContattiTrasmittenteType(
