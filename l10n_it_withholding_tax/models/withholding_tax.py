@@ -6,6 +6,10 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
+import odoo.addons.decimal_precision as dp
+
+from odoo.addons.account.models.account_payment import MAP_INVOICE_TYPE_PAYMENT_SIGN
+
 
 class WithholdingTax(models.Model):
     _name = 'withholding.tax'
@@ -65,12 +69,16 @@ class WithholdingTax(models.Model):
     wt_types = fields.Selection([
         ('enasarco', 'Enasarco tax'),
         ('ritenuta', 'Withholding tax'),
+        ('inps', 'Inps Tax'),
+        ('enpam', 'Enpam Tax'),
+        ('other', 'Other Tax')
         ], 'Withholding tax type', required=True, default='ritenuta')
-    use_daticassaprev_for_enasarco = fields.Boolean(
-        "DatiCassa export",
+    use_daticassaprev = fields.Boolean(
+        "DatiCassa export", oldname='use_daticassaprev_for_enasarco',
         help="Setting this, while exporting e-invoice XML, "
-             "Enasarco data will be also added to DatiCassaPrevidenziale"
+             "data will be also added to DatiCassaPrevidenziale"
     )
+    daticassprev_tax_id = fields.Many2one('account.tax')
 
     @api.one
     @api.constrains('rate_ids')
