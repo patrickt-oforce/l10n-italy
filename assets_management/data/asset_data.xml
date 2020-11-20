@@ -31,15 +31,12 @@
         <field name="name">IMMATERIALE</field>
         <field name="used_asset_coeff">1</field>
     </record>
-
     <record id="ad_mode_materiale" model="asset.depreciation.mode">
         <field name="name">MATERIALE</field>
         <field name="used_asset_coeff">1</field>
     </record>
     <record id="ad_mode_materiale_line" model="asset.depreciation.mode.line">
-        <field name="name">MATERIALE</field>
         <field name="mode_id" ref="ad_mode_materiale"/>
-        <field name="name">MATERIALE</field>
         <field name="from_nr">1</field>
         <field name="to_nr">1</field>
         <field name="coefficient">0.5</field>

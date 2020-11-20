@@ -1,6 +1,6 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
@@ -9,6 +9,7 @@ from odoo.tools.float_utils import float_compare, float_is_zero
 
 class WizardInvoiceManageAsset(models.TransientModel):
     _name = 'wizard.invoice.manage.asset'
+    _description = "Manage Assets from Invoices"
 
     @api.model
     def get_default_company_id(self):
@@ -384,11 +385,6 @@ class WizardInvoiceManageAsset(models.TransientModel):
             )
 
         invoice = self.invoice_line_ids.mapped('invoice_id')
-        if invoice.type in ('in_invoice', 'out_refund'):
-            raise ValidationError(
-                _("Cannot dismiss asset from supplier bills or"
-                  " customer refunds!")
-            )
         inv_num = invoice.number
 
         writeoff = 0
@@ -470,11 +466,6 @@ class WizardInvoiceManageAsset(models.TransientModel):
             )
 
         invoice = self.invoice_line_ids.mapped('invoice_id')
-        if invoice.type in ('in_invoice', 'out_refund'):
-            raise ValidationError(
-                _("Cannot dismiss asset from supplier bills or"
-                  " customer refunds!")
-            )
         inv_num = invoice.number
 
         writeoff = 0
