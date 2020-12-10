@@ -1,12 +1,13 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2020 Openforce Srls Unipersonale (www.openforce.it)
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import api, fields, models
 
 
 class WizardAssetsGenerateDepreciations(models.TransientModel):
     _name = 'wizard.asset.generate.depreciation'
+    _description = "Generate Asset Depreciations"
 
     @api.model
     def get_default_company_id(self):

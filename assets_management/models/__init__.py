@@ -1,8 +1,9 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from . import account_account
+from . import account_fiscal_year
 from . import account_invoice
 from . import account_invoice_line
 from . import account_journal
@@ -19,4 +20,3 @@ from . import asset_depreciation_mode
 from . import asset_depreciation_mode_line
 from . import asset_depreciation_type
 from . import asset_tag
-from . import account_fiscal_year

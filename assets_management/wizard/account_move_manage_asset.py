@@ -1,6 +1,6 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
@@ -9,6 +9,7 @@ from odoo.tools.float_utils import float_compare, float_is_zero
 
 class WizardAccountMoveManageAsset(models.TransientModel):
     _name = 'wizard.account.move.manage.asset'
+    _description = "Manage Assets from Account Moves"
 
     @api.model
     def get_default_company_id(self):
@@ -383,10 +384,6 @@ class WizardAccountMoveManageAsset(models.TransientModel):
             )
 
         move = self.move_line_ids.mapped('move_id')
-        if move.journal_id.type != 'sale':
-            raise ValidationError(
-                _("Cannot dismiss asset from non-sale type moves!")
-            )
         move_nums = move.name
 
         writeoff = 0
@@ -472,10 +469,6 @@ class WizardAccountMoveManageAsset(models.TransientModel):
             )
 
         move = self.move_line_ids.mapped('move_id')
-        if move.journal_id.type != 'sale':
-            raise ValidationError(
-                _("Cannot dismiss asset from non-sale type moves!")
-            )
         move_nums = move.name
 
         writeoff = 0

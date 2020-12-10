@@ -2,8 +2,6 @@
 
 import logging
 
-from datetime import datetime
-
 from odoo import _, models
 
 _logger = logging.getLogger(__name__)

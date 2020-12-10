@@ -1,6 +1,6 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2019 Openforce Srls Unipersonale (www.openforce.it)
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from datetime import date
 
@@ -9,6 +9,7 @@ from odoo import api, fields, models
 
 class WizardAssetPrevisionalReport(models.TransientModel):
     _name = 'wizard.asset.previsional.report'
+    _description = "Wizard Asset Previsional Report"
 
     @api.model
     def get_asset_order_fname_selection(self):

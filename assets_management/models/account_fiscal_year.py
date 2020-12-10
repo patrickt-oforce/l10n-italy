@@ -1,6 +1,6 @@
 # Author(s): Silvio Gregorini (silviogregorini@openforce.it)
 # Copyright 2020 Openforce Srls Unipersonale (www.openforce.it)
-# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
@@ -11,17 +11,17 @@ class AccountFiscalYear(models.Model):
 
     @api.model
     def get_fiscal_year_by_date(
-        self, date, limit=1, company=None, active_type=True, miss_raise=True
+        self, date, limit=1, company=None, miss_raise=True
     ):
         """
         Retrieves fiscal year by given ``date`` (a datetime.date object).
 
         By default, only 1 fiscal year will be returned, unless specified
         differently.
-        If ``raise_if_missing`` is True and no fiscal year is found, an error
-        will be raised.
+        If ``miss_raise`` is True and no fiscal year is found, an error will be
+        raised.
         """
-        dom = self.get_fiscal_year_by_date_domain(date, company, active_type)
+        dom = self.get_fiscal_year_by_date_domain(date, company)
         fiscal_years = self.search(dom, limit=limit)
         if not fiscal_years and miss_raise:
             date_str = fields.Date.to_string(date)
@@ -29,7 +29,7 @@ class AccountFiscalYear(models.Model):
         return fiscal_years
 
     @api.model
-    def get_fiscal_year_by_date_domain(self, date, company=None, active_type=True):
+    def get_fiscal_year_by_date_domain(self, date, company=None):
         """
         Prepares a search() domain to retrieve fiscal years by given ``date``.
         """
