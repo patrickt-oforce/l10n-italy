@@ -432,7 +432,7 @@ class AssetDepreciation(models.Model):
                 _("Depreciations cannot start before {}.").format(dt_start_str)
             )
 
-        if self.pro_rata_temporis:
+        if self.pro_rata_temporis or self._context.get('force_prorata'):
             fiscal_year_obj = self.env['account.fiscal.year']
             fy_start = fiscal_year_obj.get_fiscal_year_by_date(
                 date_start, company=self.company_id
@@ -559,7 +559,7 @@ class AssetDepreciation(models.Model):
                      date to fiscal year's last day
         """
         self.ensure_one()
-        if not self.pro_rata_temporis:
+        if not (self.pro_rata_temporis or self._context.get('force_prorata')):
             return 1
 
         dt_start, dt, dt_end = self.get_pro_rata_temporis_dates(date)

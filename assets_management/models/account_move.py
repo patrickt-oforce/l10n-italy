@@ -9,28 +9,28 @@ from odoo.exceptions import ValidationError
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    asset_ids = fields.Many2many(
-        'asset.asset',
-        compute='compute_asset_data',
-        store=True,
-        string="Assets"
-    )
-
     asset_accounting_info_ids = fields.One2many(
         'asset.accounting.info',
         'move_id',
         string="Assets Accounting Info"
     )
 
+    asset_ids = fields.Many2many(
+        'asset.asset',
+        compute='_compute_asset_data',
+        store=True,
+        string="Assets"
+    )
+
     dep_line_ids = fields.Many2many(
         'asset.depreciation.line',
-        compute='compute_asset_data',
+        compute='_compute_asset_data',
         store=True,
         string="Depreciation Lines"
     )
 
     hide_link_asset_button = fields.Boolean(
-        compute='compute_hide_link_asset_button',
+        compute='_compute_hide_link_asset_button',
         default=True,
         string="Hide Asset Button",
     )
@@ -62,10 +62,12 @@ class AccountMove(models.Model):
         return res
 
     @api.multi
-    @api.depends('asset_accounting_info_ids',
-                 'asset_accounting_info_ids.asset_id',
-                 'asset_accounting_info_ids.dep_line_id')
-    def compute_asset_data(self):
+    @api.depends(
+        'asset_accounting_info_ids',
+        'asset_accounting_info_ids.asset_id',
+        'asset_accounting_info_ids.dep_line_id',
+    )
+    def _compute_asset_data(self):
         for move in self:
             aa_info = move.get_linked_aa_info_records()
             assets = aa_info.mapped('asset_id')
@@ -78,7 +80,7 @@ class AccountMove(models.Model):
             })
 
     @api.multi
-    def compute_hide_link_asset_button(self):
+    def _compute_hide_link_asset_button(self):
         valid_account_ids = self.get_valid_accounts()
         if not valid_account_ids:
             self.update({'hide_link_asset_button': True})

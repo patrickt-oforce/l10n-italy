@@ -734,7 +734,10 @@ class ReportDepreciationLineByYear(models.TransientModel):
 
     def generate_previsional_line_single(self):
         self.ensure_one()
-        dep = self.report_depreciation_id.depreciation_id
+        # Context update to create pro-rata temporis previsional depreciations
+        # in case the report's date is not the fiscal year's end
+        ctx = dict(force_prorata=True)
+        dep = self.report_depreciation_id.depreciation_id.with_context(**ctx)
         to_date = min(self.fiscal_year_id.date_to, self.report_id.date)
         previsional_lines = dep.generate_depreciation_lines(to_date)
         self.dep_line_ids += previsional_lines

@@ -388,7 +388,7 @@ class WizardAccountMoveManageAsset(models.TransientModel):
 
         writeoff = 0
         for l in self.move_line_ids:
-            writeoff += l.currency_id.compute(l.debit - l.credit, currency)
+            writeoff += l.currency_id.compute(l.credit - l.debit, currency)
         writeoff = round(writeoff, digits)
 
         customer = self.env['res.partner']
@@ -473,7 +473,7 @@ class WizardAccountMoveManageAsset(models.TransientModel):
 
         writeoff = 0
         for l in self.move_line_ids:
-            writeoff += l.currency_id.compute(l.debit - l.credit, currency)
+            writeoff += l.currency_id.compute(l.credit - l.debit, currency)
         writeoff = round(writeoff, digits)
 
         vals = {'depreciation_ids': []}
