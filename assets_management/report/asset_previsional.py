@@ -729,15 +729,25 @@ class ReportDepreciationLineByYear(models.TransientModel):
         return self.report_depreciation_id.depreciation_id.currency_id
 
     def generate_previsional_lines(self):
-        for line in self.filtered('needs_previsional').sorted():
-            line.generate_previsional_line_single()
+        lines_grouped = dict()
+        for line in self.filtered('needs_previsional'):
+            dep = line.report_depreciation_id.depreciation_id
+            if dep not in lines_grouped:
+                lines_grouped[dep] = line
+            else:
+                lines_grouped[dep] += line
+
+        ctx = dict(force_prorata=True)
+        for lines in lines_grouped.values():
+            lines = lines.sorted()
+            last_line = lines[-1]
+            for line in lines - last_line:
+                line.generate_previsional_line_single()
+            last_line.with_context(**ctx).generate_previsional_line_single()
 
     def generate_previsional_line_single(self):
         self.ensure_one()
-        # Context update to create pro-rata temporis previsional depreciations
-        # in case the report's date is not the fiscal year's end
-        ctx = dict(force_prorata=True)
-        dep = self.report_depreciation_id.depreciation_id.with_context(**ctx)
+        dep = self.report_depreciation_id.depreciation_id
         to_date = min(self.fiscal_year_id.date_to, self.report_id.date)
         previsional_lines = dep.generate_depreciation_lines(to_date)
         self.dep_line_ids += previsional_lines
