@@ -30,7 +30,7 @@ class AssetDepreciationLine(models.Model):
     )
 
     balance = fields.Monetary(
-        compute="compute_balance",
+        compute='_compute_balance',
         store=True,
         string="Balance",
     )
@@ -123,7 +123,7 @@ class AssetDepreciationLine(models.Model):
     )
 
     requires_depreciation_nr = fields.Boolean(
-        compute='compute_requires_depreciation_nr',
+        compute='_compute_requires_depreciation_nr',
         search='search_requires_depreciation_nr_lines',
         string="Requires Dep Num"
     )
@@ -202,7 +202,7 @@ class AssetDepreciationLine(models.Model):
 
     @api.multi
     @api.depends('amount', 'move_type')
-    def compute_balance(self):
+    def _compute_balance(self):
         for line in self:
             if line.move_type in ['out', 'depreciated', 'historical', 'loss']:
                 line.balance = - line.amount
@@ -210,7 +210,7 @@ class AssetDepreciationLine(models.Model):
                 line.balance = line.amount
 
     @api.multi
-    def compute_requires_depreciation_nr(self):
+    def _compute_requires_depreciation_nr(self):
         for line in self:
             line.requires_depreciation_nr = line.is_depreciation_nr_required()
 

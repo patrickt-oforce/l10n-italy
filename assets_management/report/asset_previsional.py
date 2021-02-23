@@ -729,8 +729,21 @@ class ReportDepreciationLineByYear(models.TransientModel):
         return self.report_depreciation_id.depreciation_id.currency_id
 
     def generate_previsional_lines(self):
-        for line in self.filtered('needs_previsional').sorted():
-            line.generate_previsional_line_single()
+        lines_grouped = dict()
+        for line in self.filtered('needs_previsional'):
+            dep = line.report_depreciation_id.depreciation_id
+            if dep not in lines_grouped:
+                lines_grouped[dep] = line
+            else:
+                lines_grouped[dep] += line
+
+        ctx = dict(force_prorata=True)
+        for lines in lines_grouped.values():
+            lines = lines.sorted()
+            last_line = lines[-1]
+            for line in lines - last_line:
+                line.generate_previsional_line_single()
+            last_line.with_context(**ctx).generate_previsional_line_single()
 
     def generate_previsional_line_single(self):
         self.ensure_one()

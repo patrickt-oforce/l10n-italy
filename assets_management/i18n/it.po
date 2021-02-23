@@ -667,7 +667,7 @@ msgstr "Ammortamenti"
 #: code:addons/assets_management/report/asset_journal.py:301
 #, python-format
 msgid "Assets Depreciations "
-msgstr "Ammortamenti"
+msgstr "Ammortamenti "
 
 #. module: assets_management
 #: model:ir.model,name:assets_management.model_asset_depreciation_line
@@ -683,7 +683,7 @@ msgstr "Gestione"
 #: code:addons/assets_management/report/asset_previsional.py:332
 #, python-format
 msgid "Assets Previsional Depreciations "
-msgstr "Ammortamenti previsionali"
+msgstr "Ammortamenti previsionali "
 
 #. module: assets_management
 #: model_terms:ir.ui.view,arch_db:assets_management.asset_search_view

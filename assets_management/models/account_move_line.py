@@ -9,22 +9,22 @@ from odoo.exceptions import ValidationError
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    asset_ids = fields.Many2many(
-        'asset.asset',
-        compute='compute_asset_data',
-        store=True,
-        string="Assets"
-    )
-
     asset_accounting_info_ids = fields.One2many(
         'asset.accounting.info',
         'move_line_id',
         string="Assets Accounting Info"
     )
 
+    asset_ids = fields.Many2many(
+        'asset.asset',
+        compute='_compute_asset_data',
+        store=True,
+        string="Assets"
+    )
+
     dep_line_ids = fields.Many2many(
         'asset.depreciation.line',
-        compute='compute_asset_data',
+        compute='_compute_asset_data',
         store=True,
         string="Depreciation Lines"
     )
@@ -41,10 +41,12 @@ class AccountMoveLine(models.Model):
                 )
 
     @api.multi
-    @api.depends('asset_accounting_info_ids',
-                 'asset_accounting_info_ids.asset_id',
-                 'asset_accounting_info_ids.dep_line_id')
-    def compute_asset_data(self):
+    @api.depends(
+        'asset_accounting_info_ids',
+        'asset_accounting_info_ids.asset_id',
+        'asset_accounting_info_ids.dep_line_id',
+    )
+    def _compute_asset_data(self):
         for line in self:
             aa_info = line.get_linked_aa_info_records()
             assets = aa_info.mapped('asset_id')
