@@ -6,10 +6,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-import odoo.addons.decimal_precision as dp
-
-from odoo.addons.account.models.account_payment import MAP_INVOICE_TYPE_PAYMENT_SIGN
-
 
 class WithholdingTax(models.Model):
     _name = 'withholding.tax'
