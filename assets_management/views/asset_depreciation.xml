@@ -23,7 +23,7 @@
                         <field name="base_coeff" attrs="{'readonly': [('state', '!=', 'non_depreciated')]}"/>
                     </group>
                     <group>
-                        <field name="amount_depreciable" widget="monetary" attrs="{'readonly': [('state', '!=', 'non_depreciated')]}"/>
+                        <field name="amount_depreciable" widget="monetary" attrs="{'readonly': [('state', '!=', 'non_depreciated')]}" force_save="1"/>
                         <field name="amount_depreciable_updated" widget="monetary"/>
                         <field name="amount_historical" widget="monetary"/>
                         <field name="amount_in" widget="monetary"/>
