@@ -1400,6 +1400,8 @@ class WizardImportFatturapa(models.TransientModel):
             if self.env.user.company_id.cassa_previdenziale_product_id:
                 cassa_previdenziale_product = self.env.user.company_id \
                     .cassa_previdenziale_product_id
+                cassa_previdenziale_product = self.env[
+                    'product.product'].browse(cassa_previdenziale_product.id)
                 line_vals['product_id'] = cassa_previdenziale_product.id
                 line_vals['name'] = cassa_previdenziale_product.name
                 self.adjust_accounting_data(
