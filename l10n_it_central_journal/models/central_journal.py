@@ -18,6 +18,10 @@ class ReportGiornale(models.AbstractModel):
         lang = self.env['res.lang']
         lang_id = lang._lang_get(lang_code)
         date_format = lang_id.date_format
+        start_row = data['form']['start_row']
+        # To avoid skip initial number in case of start row != 0
+        if start_row:
+            start_row -= 1
 
         return {
             'doc_ids': data['ids'],
