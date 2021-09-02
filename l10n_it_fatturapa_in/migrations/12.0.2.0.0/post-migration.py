@@ -12,10 +12,7 @@ def create_withholding_data_lines(env):
     """
     column_wht_amount = openupgrade.get_legacy_name('ftpa_withholding_amount')
     column_wht_type = openupgrade.get_legacy_name('ftpa_withholding_type')
-    exists_wht_amount = openupgrade.column_exists(env.cr, 'account_invoice',
-                                                  column_wht_amount)
-    exists_wht_type = openupgrade.column_exists(env.cr, 'account_invoice',
-                                                column_wht_type)
+    exists = openupgrade.column_exists(env.cr, 'account_invoice', column_wht_amount)
     mapping = {
         'name': 'ai.{ftpa_withholding_type}'.format(
             ftpa_withholding_type=column_wht_type),
@@ -25,25 +22,20 @@ def create_withholding_data_lines(env):
         'write_date': 'ai.write_date',
         'write_uid': 'ai.write_uid',
     }
-    if exists_wht_amount:
+    if exists:
         mapping.update(
             {'amount': 'ai.{ftpa_withholding_amount}'.format(
                 ftpa_withholding_amount=column_wht_amount)})
-
-    if exists_wht_type:
-        mapping.update({'name': 'ai.{ftpa_withholding_type}'.format(
-            ftpa_withholding_type=column_wht_type)})
-
-        query = """
-                INSERT INTO withholding_data_line
-                ({columns})
-                SELECT {values}
-                FROM account_invoice AS ai
-                WHERE ai.{ftpa_withholding_type} IS NOT NULL;""".format(
+    query = """
+        INSERT INTO withholding_data_line
+        ({columns})
+        SELECT {values}
+        FROM account_invoice AS ai
+        WHERE ai.{ftpa_withholding_type} IS NOT NULL;""".format(
             columns=','.join(mapping.keys()),
             values=','.join(mapping.values()),
             ftpa_withholding_type=column_wht_type)
-        openupgrade.logged_query(env.cr, sql.SQL(query))
+    openupgrade.logged_query(env.cr, sql.SQL(query))
 
 
 @openupgrade.migrate()
