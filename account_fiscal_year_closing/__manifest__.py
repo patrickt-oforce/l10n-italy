@@ -6,7 +6,7 @@
 {
     "name": "Fiscal year closing",
     "summary": "Generic fiscal year closing wizard",
-    "version": "12.0.1.1.0",
+    "version": "12.0.1.1.0+PR180",
     "category": "Accounting & Finance",
     "website": "https://github.com/OCA/account-closing",
     "author": "Tecnativa, "
