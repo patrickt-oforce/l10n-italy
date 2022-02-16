@@ -231,6 +231,7 @@
                         </group>
                         <group>
                             <field name="transaction_nature_id" required="1"/>
+                            <field name="transaction_nature_b_id" required="1"/>
                         </group>
                     </group>
                     <newline/>
@@ -447,6 +448,7 @@
                         </group>
                         <group>
                             <field name="transaction_nature_id" required="1"/>
+                            <field name="transaction_nature_b_id" required="1"/>
                         </group>
                     </group>
                     <newline/>

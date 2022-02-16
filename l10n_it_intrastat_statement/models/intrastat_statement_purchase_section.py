@@ -54,6 +54,12 @@ class IntrastatStatementPurchaseSection(models.AbstractModel):
             'company_id', self.env.user.company_id)
         return company_id.intrastat_purchase_transaction_nature_id
 
+    @api.model
+    def _default_transaction_nature_b_id(self):
+        company_id = self.env.context.get(
+            'company_id', self.env.user.company_id)
+        return company_id.intrastat_purchase_transaction_nature_b_id
+
 
 class IntrastatStatementPurchaseSection1(models.Model):
     _inherit = 'account.intrastat.statement.purchase.section'
@@ -65,6 +71,10 @@ class IntrastatStatementPurchaseSection1(models.Model):
         string="Transaction Nature",
         default=lambda m: m._default_transaction_nature_id(),
     )
+    transaction_nature_b_id = fields.Many2one(
+        comodel_name='account.intrastat.transaction.nature.b',
+        string="Transaction Nature B",
+        default=lambda m: m._default_transaction_nature_b_id())
     weight_kg = fields.Integer(
         string="Net Mass (kg)")
     additional_units = fields.Integer(
@@ -201,6 +211,8 @@ class IntrastatStatementPurchaseSection1(models.Model):
             rcd += format_x(self.country_good_origin_id.code, 2)
             # Codice della provincia di destinazione della merce
             rcd += format_x(self.province_destination_id.code, 2)
+            # Codice della natura B della transazione
+            rcd += format_x(self.transaction_nature_b_id.code, 1)
 
         rcd += "\r\n"
         return rcd
