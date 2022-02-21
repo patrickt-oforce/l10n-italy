@@ -14,9 +14,8 @@ def format_x(value, length):
     """
     Format for alphanumeric characters.
 
-    > ALphanumeric data (represented with “X”) should be aligned to the left,
-    > fillng the field, if needed,  with signinificant white space(s) at the
-    > right;
+    > i dati alfanumerici (rappresentati con “X”) vanno allineati a sinistra,
+    > riempiendo il campo, ove occorra, di spazi non significativi a destra;
 
     :param value: value to be formatted
     :param length: length of the formatted field
@@ -30,8 +29,8 @@ def format_9(value, length):
     """
     Format for numeric characters.
 
-    > numeric data (represented with “9”) must be aligned to the right,
-    > filling the field, if needed, with not signinificant zeroes at the left.
+    > i dati numerici (rappresentati con “9”) vanno allineati a destra,
+    > riempiendo il campo, ove occorra, di zeri non significativi a sinistra.
 
     :param value: value to be formatted
     :param length: length of the formatted field
@@ -547,17 +546,18 @@ class AccountIntrastatStatement(models.Model):
         # Riservato a SDA
         rcd += format_x("", 1)
         # Numero di record presenti nel flusso
-        tot_lines = (
-            self.sale_section1_operation_number +
-            self.sale_section2_operation_number +
-            self.sale_section3_operation_number +
-            self.sale_section4_operation_number +
-            self.purchase_section1_operation_number +
-            self.purchase_section2_operation_number +
-            self.purchase_section3_operation_number +
-            self.purchase_section4_operation_number +
+        summable_lines = [
+            self.sale_section1_operation_number,
+            self.sale_section2_operation_number,
+            self.sale_section3_operation_number,
+            self.sale_section4_operation_number,
+            self.purchase_section1_operation_number,
+            self.purchase_section2_operation_number,
+            self.purchase_section3_operation_number,
+            self.purchase_section4_operation_number,
             1
-        )  # this rec
+        ]
+        tot_lines = sum(summable_lines)  # this rec
         # Add frontispiece sale
         if (
                 self.sale_section1_operation_number

@@ -1,7 +1,7 @@
 #  Copyright 2019 Simone Rubino - Agile Business Group
 #  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError
 
@@ -275,7 +275,7 @@ class IntrastatStatementSaleSection2(models.Model):
         elif self.statement_id.period_type == 'T' and not self.quarterly:
             raise ValidationError(
                 _("Missing reference quarter on 'Sales - Section 2' "
-                  " adjustment"
+                  "adjustment"
                   )
             )
 

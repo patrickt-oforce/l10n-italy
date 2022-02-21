@@ -559,10 +559,9 @@ class IntrastatStatementPurchaseSection4(models.Model):
         # Ammontare delle operazioni in valuta
         # >> da valorizzare solo per operazione Paesi non Euro
         amount_currency = 0
-        if not (
-                self.invoice_id.company_id.currency_id.id ==
-                self.invoice_id.currency_id.id
-        ):
+        company_currency = self.invoice_id.company_id.currency_id
+        invoice_currency = self.invoice_id.currency_id
+        if company_currency.id != invoice_currency.id:
             amount_currency = self.amount_currency
         rcd += format_9(amount_currency, 13)
         # Numero Fattura
