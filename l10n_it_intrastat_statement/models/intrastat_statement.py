@@ -229,7 +229,7 @@ class AccountIntrastatStatement(models.Model):
             ('7', 'First Statement Submitted'),
             ('8', 'Ceasing Activity or Changing VAT Number'),
             (
-                '9', 
+                '9',
                 'First Statement in Ceasing Activity or Changing VAT Number'
             ),
             ('0', 'None of the above cases'),
