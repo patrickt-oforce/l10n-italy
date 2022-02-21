@@ -1,7 +1,7 @@
 # Copyright 2019 Simone Rubino - Agile Business Group
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -60,9 +60,14 @@ class ReportIntrastatCode(models.Model):
         if not args:
             args = []
         if name:
-            records = self.search([
-                '|', ('name', operator, name), ('description', operator, name)
-                ] + args, limit=limit)
+            records = self.search(
+                [
+                    '|',
+                    ('name', operator, name),
+                    ('description', operator, name)
+                ] + args,
+                limit=limit
+            )
         else:
             records = self.search(args, limit=limit)
         return records.name_get()

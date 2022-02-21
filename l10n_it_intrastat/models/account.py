@@ -1,7 +1,7 @@
 # Copyright 2019 Simone Rubino - Agile Business Group
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
+from odoo import _, api, fields, models
 import odoo.addons.decimal_precision as dp
 from odoo.tools import float_is_zero
 from odoo.exceptions import UserError
