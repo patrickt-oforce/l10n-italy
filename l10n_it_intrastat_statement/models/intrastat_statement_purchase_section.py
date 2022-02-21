@@ -1,7 +1,7 @@
 #  Copyright 2019 Simone Rubino - Agile Business Group
 #  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError
 
@@ -182,13 +182,19 @@ class IntrastatStatementPurchaseSection1(models.Model):
         rcd = ''
         # Codice dello Stato membro del fornitore
         country_id = self.country_partner_id or self.partner_id.country_id
-        rcd += format_x(country_id.code, 2)
-        #  Codice IVA del fornitore
-        rcd += format_x(self.vat_code.replace(' ', ''), 12)
+        if self.statement_id.exclude_optional_column_sect_1_3:
+            rcd += format_x(' ', 14)
+        else:
+            rcd += format_x(country_id.code, 2)
+            #  Codice IVA del fornitore
+            rcd += format_x(self.vat_code.replace(' ', ''), 12)
         # Ammontare delle operazioni in euro
         rcd += format_9(self.amount_euro, 13)
         # Ammontare delle operazioni in valuta
-        rcd += format_9(self.amount_currency, 13)
+        if self.statement_id.exclude_optional_column_sect_1_3:
+            rcd += format_9(0, 13)
+        else:
+            rcd += format_9(self.amount_currency, 13)
         # Codice della natura della transazione
         rcd += format_x(self.transaction_nature_id.code, 1)
         # Codice della nomenclatura combinata della merce
@@ -301,12 +307,15 @@ class IntrastatStatementPurchaseSection2(models.Model):
             if not self.month:
                 raise ValidationError(
                     _("Missing reference month "
-                        "on 'Purchases - Section 2' adjustment"))
-        elif self.statement_id.period_type == 'T':
-            if not self.quarterly:
-                raise ValidationError(
-                    _("Missing reference quarter "
-                        "on 'Purchases - Section 2' adjustment"))
+                        "on 'Purchases - Section 2' adjustment"
+                      )
+                )
+        elif self.statement_id.period_type == 'T' and not self.quarterly:
+            raise ValidationError(
+                _("Missing reference quarter "
+                    "on 'Purchases - Section 2' adjustment"
+                  )
+            )
 
     @api.multi
     def _prepare_export_line(self):
@@ -332,10 +341,9 @@ class IntrastatStatementPurchaseSection2(models.Model):
         # Ammontare delle operazioni in valuta
         # >> da valorizzare solo per operazione Paesi non Euro
         amount_currency = 0
-        if not (
-                self.invoice_id.company_id.currency_id.id ==
-                self.invoice_id.currency_id.id
-        ):
+        company_currency =  self.invoice_id.company_id.currency_id
+        invoice_currency = self.invoice_id.currency_id
+        if company_currency.id != invoice_currency.id:
             amount_currency = self.amount_currency
         rcd += format_9(amount_currency, 13)
         # Codice della natura della transazione
@@ -408,13 +416,19 @@ class IntrastatStatementPurchaseSection3(models.Model):
         rcd = ''
         # Codice dello Stato membro del fornitore
         country_id = self.country_partner_id or self.partner_id.country_id
-        rcd += format_x(country_id.code, 2)
-        #  Codice IVA del fornitore
-        rcd += format_x(self.vat_code.replace(' ', ''), 12)
+        if self.statement_id.exclude_optional_column_sect_1_3:
+            rcd += format_x(' ', 14)
+        else:
+            rcd += format_x(country_id.code, 2)
+            #  Codice IVA del fornitore
+            rcd += format_x(self.vat_code.replace(' ', ''), 12)
         # Ammontare delle operazioni in euro
         rcd += format_9(self.amount_euro, 13)
         # Ammontare delle operazioni in valuta
-        rcd += format_9(self.amount_currency, 13)
+        if self.statement_id.exclude_optional_column_sect_1_3:
+            rcd += format_9(0, 13)
+        else:
+            rcd += format_9(self.amount_currency, 13)
         # Numero Fattura
         rcd += format_x(self.invoice_number, 15)
         # Data Fattura

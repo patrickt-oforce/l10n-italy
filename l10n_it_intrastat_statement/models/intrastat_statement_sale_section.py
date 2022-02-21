@@ -275,7 +275,7 @@ class IntrastatStatementSaleSection2(models.Model):
         elif self.statement_id.period_type == 'T' and not self.quarterly:
             raise ValidationError(
                 _("Missing reference quarter on 'Sales - Section 2' "
-                  "adjustment"
+                  " adjustment"
                   )
             )
 

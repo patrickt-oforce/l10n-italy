@@ -1,11 +1,11 @@
 # Copyright 2019 Simone Rubino - Agile Business Group
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
 from datetime import datetime, date, timedelta
-
 from dateutil.relativedelta import relativedelta
+
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
 
 from odoo.tools import float_round
 
@@ -14,8 +14,9 @@ def format_x(value, length):
     """
     Format for alphanumeric characters.
 
-    > alphanumeric data (represented with “X”) should be aligned to the left,
-    > fille the field, if needed, with blank spaces at right;
+    > ALphanumeric data (represented with “X”) should be aligned to the left,
+    > fillng the field, if needed,  with signinificant white space(s) at the 
+    > right;
 
     :param value: value to be formatted
     :param length: length of the formatted field
@@ -29,8 +30,8 @@ def format_9(value, length):
     """
     Format for numeric characters.
 
-    > numeric data (represented with char “9”) should be aligned to the right,
-    > fill, if needed, with zeroes at left;
+    > numeric data (represented with “9”) must be aligned to the right,
+    > filling the field, if needed, with not signinificant zeroes at the left.
 
     :param value: value to be formatted
     :param length: length of the formatted field
@@ -46,8 +47,8 @@ class AccountIntrastatStatement(models.Model):
     _rec_name = 'number'
 
     @api.multi
-    def round_min_amount(self, amount, company=None,
-                         prec_digits=None, truncate=False):
+    def round_min_amount(self, amount,
+                         company=None, prec_digits=None, truncate=False):
         """
         Return an integer representing `amount`,
         ready for usage in the statement.
@@ -385,6 +386,7 @@ class AccountIntrastatStatement(models.Model):
         store=True,
         readonly=True,
         compute='_compute_amount_purchase_s4')
+    exclude_optional_column_sect_1_3 = fields.Boolean()
 
     @api.model
     def create(self, vals):
@@ -545,18 +547,17 @@ class AccountIntrastatStatement(models.Model):
         # Riservato a SDA
         rcd += format_x("", 1)
         # Numero di record presenti nel flusso
-        sum_values = [
-            self.sale_section1_operation_number,
-            self.sale_section2_operation_number,
-            self.sale_section3_operation_number,
-            self.sale_section4_operation_number,
-            self.purchase_section1_operation_number,
-            self.purchase_section2_operation_number,
-            self.purchase_section3_operation_number,
-            self.purchase_section4_operation_number,
+        tot_lines = (
+            self.sale_section1_operation_number +
+            self.sale_section2_operation_number +
+            self.sale_section3_operation_number +
+            self.sale_section4_operation_number +
+            self.purchase_section1_operation_number +
+            self.purchase_section2_operation_number +
+            self.purchase_section3_operation_number +
+            self.purchase_section4_operation_number +
             1
-        ]
-        tot_lines = sum(sum_values)  # this rec
+        )  # this rec
         # Add frontispiece sale
         if (
                 self.sale_section1_operation_number
