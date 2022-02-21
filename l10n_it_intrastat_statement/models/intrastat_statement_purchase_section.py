@@ -341,7 +341,7 @@ class IntrastatStatementPurchaseSection2(models.Model):
         # Ammontare delle operazioni in valuta
         # >> da valorizzare solo per operazione Paesi non Euro
         amount_currency = 0
-        company_currency =  self.invoice_id.company_id.currency_id
+        company_currency = self.invoice_id.company_id.currency_id
         invoice_currency = self.invoice_id.currency_id
         if company_currency.id != invoice_currency.id:
             amount_currency = self.amount_currency

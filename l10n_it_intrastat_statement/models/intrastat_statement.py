@@ -15,7 +15,7 @@ def format_x(value, length):
     Format for alphanumeric characters.
 
     > ALphanumeric data (represented with “X”) should be aligned to the left,
-    > fillng the field, if needed,  with signinificant white space(s) at the 
+    > fillng the field, if needed,  with signinificant white space(s) at the
     > right;
 
     :param value: value to be formatted

@@ -41,15 +41,17 @@ class TestIntrastatStatement (AccountingTestCase):
         })
 
         self.partner01 = self.env.ref('base.res_partner_1')
+        
+        account_receivable = self.account_account_receivable
         self.partner01.update({
             'vat': 'IT02780790107',
-            'property_account_receivable_id': self.account_account_receivable.id,
+            'property_account_receivable_id': account_receivable.id,
             'property_account_payable_id': self.account_account_payable.id,
         })
         self.partner02 = self.env.ref('base.res_partner_2')
         self.partner02.update({
             'vat': 'IT12345670017',
-            'property_account_receivable_id': self.account_account_receivable.id,
+            'property_account_receivable_id': account_receivable.id,
             'property_account_payable_id': self.account_account_payable.id,
         })
         self.product01 = self.env.ref('product.product_product_10')
