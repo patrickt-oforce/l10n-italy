@@ -92,7 +92,7 @@ class AccountIntrastatTransport(models.Model):
         string="Name")
 
 
-class AccountIntrastatTransationNature(models.Model):
+class AccountIntrastatTransactionNature(models.Model):
     _name = 'account.intrastat.transaction.nature'
     _description = "Transaction Nature"
 
@@ -104,7 +104,7 @@ class AccountIntrastatTransationNature(models.Model):
         string="Name")
 
 
-class AccountIntrastatTransationNatureB(models.Model):
+class AccountIntrastatTransactionNatureB(models.Model):
     _name = 'account.intrastat.transaction.nature.b'
     _description = "Transaction Nature B"
 

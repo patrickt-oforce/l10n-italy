@@ -332,7 +332,8 @@ class AccountInvoice(models.Model):
                         excluded_amount += line.price_subtotal
 
                 total_amount = sum(
-                    l.amount_currency for l in invoice.intrastat_line_ids)
+                    line.amount_currency for line in invoice.intrastat_line_ids
+                )
                 subtotal = abs(invoice.amount_untaxed - excluded_amount)
                 if not float_is_zero(
                     total_amount - subtotal,
@@ -435,10 +436,7 @@ class AccountInvoiceIntrastat(models.Model):
 
     @api.multi
     def name_get(self):
-        res = []
-        for l in self:
-            res.append((l.id, '%s' % l.invoice_id.number))
-        return res
+        return [(line.id, str(line.invoice_id.number)) for line in self]
 
     @api.depends('amount_currency')
     def _compute_amount_euro(self):
