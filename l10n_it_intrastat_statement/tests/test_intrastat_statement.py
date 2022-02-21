@@ -41,7 +41,7 @@ class TestIntrastatStatement (AccountingTestCase):
         })
 
         self.partner01 = self.env.ref('base.res_partner_1')
-        
+
         account_receivable = self.account_account_receivable
         self.partner01.update({
             'vat': 'IT02780790107',
