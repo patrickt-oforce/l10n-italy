@@ -14,8 +14,8 @@ def format_x(value, length):
     """
     Format for alphanumeric characters.
 
-    > i dati alfanumerici (rappresentati con “X”) vanno allineati a sinistra,
-    > riempiendo il campo, ove occorra, di spazi non significativi a destra;
+    > alphanumeric data (represented with “X”) should be aligned to the left,
+    > fille the field, if needed, with blank spaces at right;
 
     :param value: value to be formatted
     :param length: length of the formatted field
@@ -29,8 +29,8 @@ def format_9(value, length):
     """
     Format for numeric characters.
 
-    > i dati numerici (rappresentati con “9”) vanno allineati a destra,
-    > riempiendo il campo, ove occorra, di zeri non significativi a sinistra.
+    > numeric data (represented with char “9”) should be aligned to the right,
+    > fill, if needed, with zeroes at left;
 
     :param value: value to be formatted
     :param length: length of the formatted field
@@ -46,8 +46,8 @@ class AccountIntrastatStatement(models.Model):
     _rec_name = 'number'
 
     @api.multi
-    def round_min_amount(self, amount,
-                         company=None, prec_digits=None, truncate=False):
+    def round_min_amount(self, amount, company=None,
+                         prec_digits=None, truncate=False):
         """
         Return an integer representing `amount`,
         ready for usage in the statement.
@@ -228,7 +228,10 @@ class AccountIntrastatStatement(models.Model):
         selection=[
             ('7', 'First Statement Submitted'),
             ('8', 'Ceasing Activity or Changing VAT Number'),
-            ('9', 'First Statement in Ceasing Activity or Changing VAT Number'),
+            (
+                '9', 
+                'First Statement in Ceasing Activity or Changing VAT Number'
+            ),
             ('0', 'None of the above cases'),
         ],
         string="Special Cases",
@@ -542,17 +545,18 @@ class AccountIntrastatStatement(models.Model):
         # Riservato a SDA
         rcd += format_x("", 1)
         # Numero di record presenti nel flusso
-        tot_lines = (
-            self.sale_section1_operation_number +
-            self.sale_section2_operation_number +
-            self.sale_section3_operation_number +
-            self.sale_section4_operation_number +
-            self.purchase_section1_operation_number +
-            self.purchase_section2_operation_number +
-            self.purchase_section3_operation_number +
-            self.purchase_section4_operation_number +
+        sum_values = [
+            self.sale_section1_operation_number,
+            self.sale_section2_operation_number,
+            self.sale_section3_operation_number,
+            self.sale_section4_operation_number,
+            self.purchase_section1_operation_number,
+            self.purchase_section2_operation_number,
+            self.purchase_section3_operation_number,
+            self.purchase_section4_operation_number,
             1
-        )  # this rec
+        ]
+        tot_lines = sum(sum_values)  # this rec
         # Add frontispiece sale
         if (
                 self.sale_section1_operation_number
