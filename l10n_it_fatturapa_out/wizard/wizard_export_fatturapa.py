@@ -690,6 +690,9 @@ class WizardExportFatturapa(models.TransientModel):
                 self._to_EUR(line.currency_id, line.price_subtotal), 2),
             AliquotaIVA=AliquotaIVA)
         if line.currency_id != self.env.ref('base.EUR'):
+            prezzo_unitario = DettaglioLinea.PrezzoTotale / DettaglioLinea.Quantita
+            DettaglioLinea.PrezzoUnitario = '{prezzo:.{precision}f}'.format(
+                prezzo=prezzo_unitario, precision=price_precision)
             AltriDatiGestionali = AltriDatiGestionaliType(
                 TipoDato="Valuta",
                 RiferimentoTesto=line.currency_id.name,
