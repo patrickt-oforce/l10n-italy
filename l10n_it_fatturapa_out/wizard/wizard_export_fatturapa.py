@@ -99,15 +99,23 @@ class WizardExportFatturapa(models.TransientModel):
                 ('type', '=', 'ir.actions.report')]
 
     @api.model
-    def _to_EUR(self, currency, amount,
-            company=None,
-            today=fields.Date.today()):
+    def _to_EUR(self, currency, amount, invoice, company=None, today=None):
+        # Dispatch exchange date to convert euros in strange currency
+        if today:
+            exchange_date = today
+        elif invoice and invoice.rc_purchase_invoice_id.date_invoice:
+            exchange_date = invoice.rc_purchase_invoice_id.date_invoice
+        elif invoice and invoice.date_invoice:
+            exchange_date = invoice.date_invoice
+        else:
+            exchange_date = fields.Date.today()
+
         company = company or self.env.user.company_id
         euro = self.env.ref('base.EUR')
         if currency == euro:
 
             return amount
-        return currency.compute(amount, euro)
+        return currency.with_context(date=exchange_date).compute(amount, euro)
 
     report_print_menu = fields.Many2one(
         comodel_name='ir.actions.actions',
@@ -554,10 +562,10 @@ class WizardExportFatturapa(models.TransientModel):
 
         TipoDocumento = invoice.fiscal_document_type_id.code
         ImportoTotaleDocumento = self._to_EUR(
-            invoice.currency_id, invoice.amount_total)
+            invoice.currency_id, invoice.amount_total, invoice=invoice)
         if invoice.split_payment:
             ImportoTotaleDocumento += self._to_EUR(
-                invoice.currency_id, invoice.amount_sp)
+                invoice.currency_id, invoice.amount_sp, invoice=invoice)
         body.DatiGenerali.DatiGeneraliDocumento = DatiGeneraliDocumentoType(
             TipoDocumento=TipoDocumento,
             Divisa=self.env.ref('base.EUR').name,
@@ -672,11 +680,13 @@ class WizardExportFatturapa(models.TransientModel):
         if len(line.invoice_line_tax_ids) > 1:
             raise UserError(
                 _("Too many taxes for invoice line %s.") % line.name)
+
         aliquota = line.invoice_line_tax_ids[0].amount
         AliquotaIVA = '%.2f' % float_round(aliquota, 2)
         line.ftpa_line_number = line_no
         prezzo_unitario = self._to_EUR(
-            line.currency_id, self._get_prezzo_unitario(line))
+            line.currency_id, self._get_prezzo_unitario(line),
+            invoice=line.invoice_id)
         DettaglioLinea = DettaglioLineeType(
             NumeroLinea=str(line_no),
             Descrizione=encode_for_export(line.name, 1000),
@@ -687,7 +697,8 @@ class WizardExportFatturapa(models.TransientModel):
             UnitaMisura=line.uom_id and (
                 unidecode(line.uom_id.name)) or None,
             PrezzoTotale='%.2f' % float_round(
-                self._to_EUR(line.currency_id, line.price_subtotal), 2),
+                self._to_EUR(line.currency_id, line.price_subtotal,
+                             invoice=line.invoice_id), 2),
             AliquotaIVA=AliquotaIVA)
         if line.currency_id != self.env.ref('base.EUR'):
             prezzo_unitario = DettaglioLinea.PrezzoTotale / DettaglioLinea.Quantita
@@ -761,9 +772,10 @@ class WizardExportFatturapa(models.TransientModel):
             riepilogo = DatiRiepilogoType(
                 AliquotaIVA='%.2f' % float_round(tax.amount, 2),
                 ImponibileImporto='%.2f' % float_round(self._to_EUR(
-                    invoice.currency_id, tax_line.base), 2),
+                    invoice.currency_id, tax_line.base, invoice=invoice), 2),
                 Imposta='%.2f' % float_round(
-                    self._to_EUR(invoice.currency_id, tax_line.amount), 2)
+                    self._to_EUR(invoice.currency_id, tax_line.amount,
+                                 invoice=invoice), 2)
                 )
             if tax.amount == 0.0:
                 if not tax.kind_id:
@@ -808,7 +820,8 @@ class WizardExportFatturapa(models.TransientModel):
                 ImportoPagamento = '%.2f' % float_round(
                     self._to_EUR(
                         invoice.currency_id,
-                        move_line.amount_currency or move_line.debit), 2)
+                        move_line.amount_currency or move_line.debit,
+                        invoice=invoice), 2)
                 # Create with only mandatory fields
                 DettaglioPagamento = DettaglioPagamentoType(
                     ModalitaPagamento=(
