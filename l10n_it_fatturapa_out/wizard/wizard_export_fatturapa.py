@@ -107,8 +107,6 @@ class WizardExportFatturapa(models.TransientModel):
         else:
             exchange_date = fields.Date.today()
 
-        company = company or self.env.user.company_id
-
         return currency.with_context(date=exchange_date).compute(amount, euro)
 
     @api.model
