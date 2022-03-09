@@ -97,7 +97,7 @@ class WizardExportFatturapa(models.TransientModel):
 
         if currency == euro:
             return amount
-        # Dispatch exchange date to convert euros in strange currency
+        # Dispatch exchange date to convert foreign currency in EUR
         if today:
             exchange_date = today
         elif invoice and invoice.rc_purchase_invoice_id.date_invoice:
