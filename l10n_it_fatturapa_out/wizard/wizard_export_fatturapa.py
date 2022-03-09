@@ -93,6 +93,10 @@ class WizardExportFatturapa(models.TransientModel):
 
     @api.model
     def _to_EUR(self, currency, amount, invoice, company=None, today=None):
+        euro = self.env.ref('base.EUR')
+
+        if currency == euro:
+            return amount
         # Dispatch exchange date to convert euros in strange currency
         if today:
             exchange_date = today
@@ -104,10 +108,6 @@ class WizardExportFatturapa(models.TransientModel):
             exchange_date = fields.Date.today()
 
         company = company or self.env.user.company_id
-        euro = self.env.ref('base.EUR')
-
-        if currency == euro:
-            return amount
 
         return currency.with_context(date=exchange_date).compute(amount, euro)
 
