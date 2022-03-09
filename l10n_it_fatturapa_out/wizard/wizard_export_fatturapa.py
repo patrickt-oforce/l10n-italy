@@ -94,7 +94,6 @@ class WizardExportFatturapa(models.TransientModel):
     @api.model
     def _to_EUR(self, currency, amount, invoice, company=None, today=None):
         # Dispatch exchange date to convert euros in strange currency
-        import pdb; pdb.set_trace()
         if today:
             exchange_date = today
         elif invoice and invoice.rc_purchase_invoice_id.date_invoice:
