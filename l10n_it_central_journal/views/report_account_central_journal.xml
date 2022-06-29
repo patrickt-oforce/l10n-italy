@@ -169,7 +169,6 @@
                     </table>
                     <br/>
                 </div>
-
                 <t t-set="save_move_id"
                    t-value="save_print_info(daterange,print_state,date_move_line_to,counter,tot_debit,tot_credit)"/>
 
