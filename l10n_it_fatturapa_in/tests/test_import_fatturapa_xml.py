@@ -175,11 +175,11 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         # File not exist Exception
         self.assertRaises(
             Exception, self.run_wizard, 'test6_Exception', '')
-        # fake Signed file is passed , generate orm_exception
-        self.assertRaises(
-            UserError, self.run_wizard, 'test6_orm_exception',
-            'IT05979361218_fake.xml.p7m'
-        )
+        # fake Signed file is passed , generate parsing error
+        with mute_logger('odoo.addons.l10n_it_fatturapa_in.models.attachment'):
+            attachment = self.create_attachment(
+                'test6_orm_exception', 'IT05979361218_fake.xml.p7m')
+        self.assertIn('Invalid xml', attachment.e_invoice_parsing_error)
 
     def test_07_xml_import(self):
         # 2 lines with quantity != 1 and discounts
@@ -767,6 +767,26 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         invoice_id = res.get('domain')[0][2][0]
         invoice = self.invoice_model.browse(invoice_id)
         self.assertEqual(invoice.carrier_id.vat, "IT04102770965")
+
+    def test_51_xml_import(self):
+        res = self.run_wizard("test51", "IT02780790107_11008.xml")
+        invoice_ids = res.get("domain")[0][2]
+        invoice = self.invoice_model.browse(invoice_ids)
+        self.assertTrue(invoice.fatturapa_attachment_in_id.is_self_invoice)
+
+    def test_52_xml_import(self):
+        """
+        Check that an XML with syntax error is created,
+        but it shows a parsing error.
+        """
+        with mute_logger('odoo.addons.l10n_it_fatturapa_in.models.attachment'):
+            attachment = self.create_attachment(
+                "test52",
+                "ZGEXQROO37831_anonimizzata.xml",
+            )
+        self.assertIn('http://ivaservizi.agenziaentrate.gov.it/ '
+                      'has no category elementBinding',
+                      attachment.e_invoice_parsing_error)
 
     def test_01_xml_link(self):
         """

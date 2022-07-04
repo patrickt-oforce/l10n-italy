@@ -9,6 +9,9 @@
                 <div class="alert alert-info" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('e_invoice_validation_error','=',False)]}">
                      <bold><field name="e_invoice_validation_message" nolabel="1"/></bold>
                 </div>
+                <div class="alert alert-warning" role="alert" style="margin-bottom:0px;" attrs="{'invisible': [('e_invoice_parsing_error','=',False)]}">
+                     <bold><field name="e_invoice_parsing_error" nolabel="1"/></bold>
+                </div>
                 <field name="e_invoice_validation_error" invisible="1"/>
                 <div>
                     <group>
@@ -90,7 +93,7 @@
             <search>
                 <field name="name"/>
                 <field name="xml_supplier_id"/>
-                <filter name="to_register" string="To Register" domain="[('registered','=',False)]"/>
+                <filter name="to_register" string="To Register" domain="[('registered','=',False), ('is_self_invoice','=',False)]"/>
             </search>
         </field>
     </record>
@@ -115,7 +118,20 @@
             </field>
         </field>
     </record>
+
     <!-- Extend purchase invoice  -->
+
+    <record id="invoice_supplier_tree_fatturapa_in" model="ir.ui.view">
+        <field name="name">invoice_supplier_tree_fatturapa_in</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_tree"></field>
+        <field name="arch" type="xml">
+            <field name="date_invoice" position="after">
+                <field name="e_invoice_received_date"/>
+            </field>
+        </field>
+    </record>
+
     <record id="view_invoice_form_fatturapa_in" model="ir.ui.view">
         <field name="name">account.invoice.fatturapa_in</field>
         <field name="model">account.invoice</field>
@@ -297,7 +313,7 @@
                         <field name="fatturapa_payments" nolabel="1" readonly="1">
                             <tree string="Payments">
                                 <field name="payment_terms"/>
-                                <field name="payment_methods"/>
+                                <field name="payment_methods" widget="many2many_tags"/>
                             </tree>
                             <form string="Payments" version="7.0">
                                 <sheet>
