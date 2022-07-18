@@ -7,7 +7,7 @@
 
 {
     'name': 'ITA - Fattura elettronica - Emissione',
-    'version': '12.0.2.3.1+PR2684',
+    'version': '12.0.3.0.0+PR2684',
     'development_status': 'Beta',
     'category': 'Localization/Italy',
     'summary': 'Emissione fatture elettroniche',
@@ -23,6 +23,7 @@
         'l10n_it_split_payment',
         ],
     'data': [
+        'security/res_groups.xml',
         'wizard/wizard_export_fatturapa_view.xml',
         'wizard/wizard_export_fatturapa_view_regenerate.xml',
         'views/attachment_view.xml',

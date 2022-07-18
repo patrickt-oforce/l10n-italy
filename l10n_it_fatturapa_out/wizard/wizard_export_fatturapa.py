@@ -113,7 +113,6 @@ class WizardExportFatturapa(models.TransientModel):
         company = company or self.env.user.company_id
         euro = self.env.ref('base.EUR')
         if currency == euro:
-
             return amount
         return currency.with_context(date=exchange_date).compute(amount, euro)
 
@@ -564,8 +563,7 @@ class WizardExportFatturapa(models.TransientModel):
         ImportoTotaleDocumento = self._to_EUR(
             invoice.currency_id, invoice.amount_total, invoice=invoice)
         if invoice.split_payment:
-            ImportoTotaleDocumento += self._to_EUR(
-                invoice.currency_id, invoice.amount_sp, invoice=invoice)
+            ImportoTotaleDocumento += invoice.amount_sp
         body.DatiGenerali.DatiGeneraliDocumento = DatiGeneraliDocumentoType(
             TipoDocumento=TipoDocumento,
             Divisa=self.env.ref('base.EUR').name,
@@ -680,7 +678,6 @@ class WizardExportFatturapa(models.TransientModel):
         if len(line.invoice_line_tax_ids) > 1:
             raise UserError(
                 _("Too many taxes for invoice line %s.") % line.name)
-
         aliquota = line.invoice_line_tax_ids[0].amount
         AliquotaIVA = '%.2f' % float_round(aliquota, 2)
         line.ftpa_line_number = line_no
@@ -710,7 +707,6 @@ class WizardExportFatturapa(models.TransientModel):
                 RiferimentoNumero=self._get_prezzo_unitario(line),
                 RiferimentoData=line.invoice_id.date
             )
-            DettaglioLinea.AltriDatiGestionali.append(AltriDatiGestionali)
         DettaglioLinea.ScontoMaggiorazione.extend(
             self.setScontoMaggiorazione(line))
         if aliquota == 0.0:
@@ -818,10 +814,10 @@ class WizardExportFatturapa(models.TransientModel):
             for move_line_id in payment_line_ids:
                 move_line = move_line_pool.browse(move_line_id)
                 ImportoPagamento = '%.2f' % float_round(
-                    self._to_EUR(
-                        invoice.currency_id,
-                        move_line.amount_currency or move_line.debit,
-                        invoice=invoice), 2)
+                    self._to_EUR(invoice.currency_id,
+                                 move_line.amount_currency or
+                                 move_line.debit, invoice),
+                    2)
                 # Create with only mandatory fields
                 DettaglioPagamento = DettaglioPagamentoType(
                     ModalitaPagamento=(
