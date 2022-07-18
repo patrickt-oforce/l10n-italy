@@ -98,6 +98,24 @@ class WizardExportFatturapa(models.TransientModel):
         return [('binding_model_id', '=', model_name),
                 ('type', '=', 'ir.actions.report')]
 
+    @api.model
+    def _to_EUR(self, currency, amount, invoice, company=None, today=None):
+        # Dispatch exchange date to convert euros in strange currency
+        if today:
+            exchange_date = today
+        elif invoice and invoice.rc_purchase_invoice_id.date:
+            exchange_date = invoice.rc_purchase_invoice_id.date
+        elif invoice and invoice.date:
+            exchange_date = invoice.date
+        else:
+            exchange_date = fields.Date.today()
+
+        company = company or self.env.user.company_id
+        euro = self.env.ref('base.EUR')
+        if currency == euro:
+            return amount
+        return currency.with_context(date=exchange_date).compute(amount, euro)
+
     report_print_menu = fields.Many2one(
         comodel_name='ir.actions.actions',
         domain=_domain_ir_values,
@@ -542,12 +560,13 @@ class WizardExportFatturapa(models.TransientModel):
                 _('Invoice %s does not have a number.' % invoice.display_name))
 
         TipoDocumento = invoice.fiscal_document_type_id.code
-        ImportoTotaleDocumento = invoice.amount_total
+        ImportoTotaleDocumento = self._to_EUR(
+            invoice.currency_id, invoice.amount_total, invoice=invoice)
         if invoice.split_payment:
             ImportoTotaleDocumento += invoice.amount_sp
         body.DatiGenerali.DatiGeneraliDocumento = DatiGeneraliDocumentoType(
             TipoDocumento=TipoDocumento,
-            Divisa=invoice.currency_id.name,
+            Divisa=self.env.ref('base.EUR').name,
             Data=invoice.date_invoice,
             Numero=invoice.number,
             ImportoTotaleDocumento='%.2f' % float_round(ImportoTotaleDocumento, 2))
@@ -662,7 +681,9 @@ class WizardExportFatturapa(models.TransientModel):
         aliquota = line.invoice_line_tax_ids[0].amount
         AliquotaIVA = '%.2f' % float_round(aliquota, 2)
         line.ftpa_line_number = line_no
-        prezzo_unitario = self._get_prezzo_unitario(line)
+        prezzo_unitario = self._to_EUR(
+            line.currency_id, self._get_prezzo_unitario(line),
+            invoice=line.invoice_id)
         DettaglioLinea = DettaglioLineeType(
             NumeroLinea=str(line_no),
             Descrizione=encode_for_export(line.name, 1000),
@@ -672,8 +693,20 @@ class WizardExportFatturapa(models.TransientModel):
                 qta=line.quantity, precision=uom_precision),
             UnitaMisura=line.uom_id and (
                 unidecode(line.uom_id.name)) or None,
-            PrezzoTotale='%.2f' % float_round(line.price_subtotal, 2),
+            PrezzoTotale='%.2f' % float_round(
+                self._to_EUR(line.currency_id, line.price_subtotal,
+                             invoice=line.invoice_id), 2),
             AliquotaIVA=AliquotaIVA)
+        if line.currency_id != self.env.ref('base.EUR'):
+            prezzo_unitario = DettaglioLinea.PrezzoTotale / DettaglioLinea.Quantita
+            DettaglioLinea.PrezzoUnitario = '{prezzo:.{precision}f}'.format(
+                prezzo=prezzo_unitario, precision=price_precision)
+            AltriDatiGestionali = AltriDatiGestionaliType(
+                TipoDato="Valuta",
+                RiferimentoTesto=line.currency_id.name,
+                RiferimentoNumero=self._get_prezzo_unitario(line),
+                RiferimentoData=line.invoice_id.date
+            )
         DettaglioLinea.ScontoMaggiorazione.extend(
             self.setScontoMaggiorazione(line))
         if aliquota == 0.0:
@@ -734,8 +767,11 @@ class WizardExportFatturapa(models.TransientModel):
             tax = tax_line.tax_id
             riepilogo = DatiRiepilogoType(
                 AliquotaIVA='%.2f' % float_round(tax.amount, 2),
-                ImponibileImporto='%.2f' % float_round(tax_line.base, 2),
-                Imposta='%.2f' % float_round(tax_line.amount, 2)
+                ImponibileImporto='%.2f' % float_round(self._to_EUR(
+                    invoice.currency_id, tax_line.base, invoice=invoice), 2),
+                Imposta='%.2f' % float_round(
+                    self._to_EUR(invoice.currency_id, tax_line.amount,
+                                 invoice=invoice), 2)
                 )
             if tax.amount == 0.0:
                 if not tax.kind_id:
@@ -778,7 +814,10 @@ class WizardExportFatturapa(models.TransientModel):
             for move_line_id in payment_line_ids:
                 move_line = move_line_pool.browse(move_line_id)
                 ImportoPagamento = '%.2f' % float_round(
-                    move_line.amount_currency or move_line.debit, 2)
+                    self._to_EUR(invoice.currency_id,
+                                 move_line.amount_currency or
+                                 move_line.debit, invoice),
+                    2)
                 # Create with only mandatory fields
                 DettaglioPagamento = DettaglioPagamentoType(
                     ModalitaPagamento=(
