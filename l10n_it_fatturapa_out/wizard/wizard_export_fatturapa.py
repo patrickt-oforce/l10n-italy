@@ -707,6 +707,9 @@ class WizardExportFatturapa(models.TransientModel):
                 RiferimentoNumero=self._get_prezzo_unitario(line),
                 RiferimentoData=line.invoice_id.date
             )
+            DettaglioLinea.AltriDatiGestionali.append(
+                AltriDatiGestionali
+            )
         DettaglioLinea.ScontoMaggiorazione.extend(
             self.setScontoMaggiorazione(line))
         if aliquota == 0.0:
