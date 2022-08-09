@@ -7,7 +7,7 @@
 
 {
     'name': 'ITA - Fattura elettronica - Emissione',
-    'version': '12.0.3.0.0+PR2684',
+    'version': '12.0.3.1.0+PR2042',
     'development_status': 'Beta',
     'category': 'Localization/Italy',
     'summary': 'Emissione fatture elettroniche',
@@ -19,7 +19,6 @@
     'depends': [
         'l10n_it_account',
         'l10n_it_fatturapa',
-        'l10n_it_reverse_charge',
         'l10n_it_split_payment',
         ],
     'data': [
