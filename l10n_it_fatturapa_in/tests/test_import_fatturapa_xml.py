@@ -4,7 +4,7 @@ from datetime import date
 
 from odoo.tools import mute_logger
 from .fatturapa_common import FatturapaCommon
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class TestDuplicatedAttachment(FatturapaCommon):
@@ -345,8 +345,6 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
             invoice.inconsistencies,
             u"Company Name field contains 'Societa\' "
             "Alpha SRL'. Your System contains 'SOCIETA\' ALPHA SRL'\n\n"
-            u"XML contains tax with percentage '15.55'"
-            " but it does not exist in your system\n"
             "XML contains tax with percentage '15.55'"
             " but it does not exist in your system")
 
@@ -751,12 +749,22 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         # IT01234567890_FPR14.xml should be tested manually
 
     def test_48_xml_import(self):
-        # my company bank account is the same as the one in XML:
+        # bank account already exists for another partner
         # invoice creation must not be blocked
+        to_unlink = []
+        bank = self.env["res.bank"].create({
+            "bic": "BCITITMM",
+            "name": "Other Bank",
+        })
+        to_unlink.append(bank)
+        partner = self.env["res.partner"].create({
+            "name": "Some Other Company",
+        })
+        to_unlink.append(partner)
         self.env["res.partner.bank"].create({
             "acc_number": "IT59R0100003228000000000622",
             "company_id": self.env.user.company_id.id,
-            "partner_id": self.env.user.company_id.partner_id.id,
+            "partner_id": partner.id,
         })
         res = self.run_wizard('test48', 'IT01234567890_FPR15.xml')
         invoice_id = res.get('domain')[0][2][0]
@@ -764,12 +772,19 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         self.assertTrue(
             "Bank account IT59R0100003228000000000622 already exists" in
             invoice.inconsistencies)
+        for model in to_unlink:
+            model.unlink()
 
     def test_49_xml_import(self):
         res = self.run_wizard('test49', 'IT01234567890_FPR16.xml')
         invoice_id = res.get('domain')[0][2][0]
         invoice = self.invoice_model.browse(invoice_id)
         self.assertEqual(invoice.carrier_id.vat, "IT04102770965")
+
+    def test_50_xml_import(self):
+        # this method name is used in 14.0
+        # reserving to make porting easier
+        pass
 
     def test_51_xml_import(self):
         res = self.run_wizard("test51", "IT02780790107_11008.xml")
@@ -786,9 +801,46 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
             "test52",
             "ZGEXQROO37831_anonimizzata.xml",
         )
-        self.assertIn('http://ivaservizi.agenziaentrate.gov.it/ '
-                      'has no category elementBinding',
+        self.assertIn('syntax error',
                       attachment.e_invoice_parsing_error)
+
+    def test_53_xml_import(self):
+        """
+        Check that VAT of non-IT partner is not checked.
+        """
+        partner_model = self.env['res.partner']
+        # Arrange: A partner with vat GB99999999999 does not exist
+        not_valid_vat = 'GB99999999999'
+
+        def vat_partner_exists():
+            return partner_model.search([
+                ('vat', '=', not_valid_vat),
+            ])
+        self.assertFalse(vat_partner_exists())
+
+        # Act: Import an e-bill containing a supplier with vat GB99999999999
+        self.create_attachment(
+            "test53",
+            "IT01234567890_x05mX.xml",
+        )
+
+        # Assert: A partner with vat GB99999999999 exists,
+        # and the vat is usually not valid for UK
+        self.assertTrue(vat_partner_exists())
+        with self.assertRaises(ValidationError) as ve:
+            partner_model.create([{
+                'name': "Test not valid VAT",
+                'country_id': self.ref('base.uk'),
+                'vat': not_valid_vat,
+            }])
+        exc_message = ve.exception.args[0]
+        self.assertRegex(
+            exc_message,
+            'VAT number .*{not_valid_vat}.* does not seem to be valid'
+            .format(
+                not_valid_vat=not_valid_vat,
+            )
+        )
 
     def _check_invoice_configured_date(self, invoice, configured_date):
         """
@@ -857,6 +909,33 @@ class TestFatturaPAXMLValidation(FatturapaCommon):
         # Update the reference so that importing the same file
         # (in other tests) does not raise "Duplicated vendor reference..."
         invoice.reference = 'xml_import_inv_date'
+
+    def test_54_xml_import(self):
+        # Payments may refer to our own bank account (SEPA)
+        to_unlink = []
+        bank = self.env["res.bank"].create({
+            "bic": "BCITITMM",
+            "name": "Other Bank",
+        })
+        to_unlink.append(bank)
+        bank_account = self.env["res.partner.bank"].create({
+            "acc_number": "IT59R0100003228000000000622",
+            "company_id": self.env.user.company_id.id,
+            "partner_id": self.env.user.company_id.partner_id.id,
+        })
+        to_unlink.append(bank_account)
+        res = self.run_wizard('test54', 'IT01234567890_FPR15.xml')
+        invoice_id = res.get('domain')[0][2][0]
+        invoice = self.invoice_model.browse(invoice_id)
+        self.assertIn(
+            invoice.fatturapa_payments[0].payment_methods[0].payment_bank_iban,
+            invoice.company_id.partner_id.bank_ids.mapped("acc_number")
+        )
+        self.assertFalse(
+            "Bank account IT59R0100003228000000000622 already exists" in
+            invoice.inconsistencies)
+        for model in to_unlink:
+            model.unlink()
 
     def test_01_xml_link(self):
         """
