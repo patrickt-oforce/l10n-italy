@@ -122,6 +122,7 @@ class WizardRegistroIva(models.TransientModel):
         date_format = lang_id.date_format
         datas_form['date_format'] = date_format
         datas_form['year_footer'] = wizard.year_footer
+        datas_form['daily_totals'] = wizard.daily_totals
 
         if wizard.tax_registry_id:
             datas_form['tax_registry_name'] = wizard.tax_registry_id.name
