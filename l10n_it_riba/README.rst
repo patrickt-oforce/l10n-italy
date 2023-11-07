@@ -120,14 +120,6 @@ in due momenti:
    registrazione dalla vista ed elenco ed eseguendo l'azione "Imposta
    data di pagamento RiBa".
 
-Known issues / Roadmap
-======================
-
-**Italiano**
-
-Attenzione! Il modulo è stato migrato, ma gli script di migrazione non
-sono stati provati.
-
 Bug Tracker
 ===========
 
