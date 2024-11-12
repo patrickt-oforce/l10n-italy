@@ -159,3 +159,29 @@ class TestInvoiceRC(FatturapaCommon):
         invoice_id = res.get("domain")[0][2][0]
         invoice = self.invoice_model.browse(invoice_id)
         self.assertTrue(len(invoice.invoice_line_ids) == 0)
+
+    def test_01_xml_import(self):
+        supplier = self.env["res.partner"].search([("vat", "=", "IT02780790107")])[0]
+        # import lines grouped by "Tax rate"
+        supplier.e_invoice_detail_level = "1"
+        res = self.run_wizard(
+            "test2", "IT01234567890_FPR04.xml", module_name="l10n_it_fatturapa_in_rc"
+        )
+        # Trigger pending computations
+        # as if they were done during the attachment import,
+        # in the UX this happens right before going back to the client.
+        # Otherwise account.move.line.rc field is computed on demand
+        # and its check on the context fails.
+        self.env(
+            context=dict(
+                active_model="fatturapa.attachment.in",
+            ),
+        ).flush_all()
+
+        invoice_id = res.get("domain")[0][2][0]
+        invoice = self.invoice_model.browse(invoice_id)
+        self.assertEqual(invoice.invoice_line_ids[0].name, "Riepilogo Aliquota 22.00")
+        self.assertEqual(invoice.invoice_line_ids[1].name, "Riepilogo Aliquota 0.00")
+        self.assertFalse(invoice.invoice_line_ids[0].rc)
+        self.assertTrue(invoice.invoice_line_ids[1].rc)
+        self.assertEqual(invoice.invoice_line_ids[0].tax_ids.name, "22% e-bill")
