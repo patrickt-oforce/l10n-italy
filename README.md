@@ -45,7 +45,7 @@ addon | version | maintainers | summary
 [l10n_it_fatturapa_import_zip_in_rc](l10n_it_fatturapa_import_zip_in_rc/) | 16.0.1.0.0 | [![SirAionTech](https://github.com/SirAionTech.png?size=30px)](https://github.com/SirAionTech) | Importare fatture elettroniche con inversione contabile da un file ZIP.
 [l10n_it_fatturapa_in](l10n_it_fatturapa_in/) | 16.0.1.4.1 |  | Ricezione fatture elettroniche
 [l10n_it_fatturapa_in_purchase](l10n_it_fatturapa_in_purchase/) | 16.0.1.0.0 |  | Modulo ponte tra ricezione fatture elettroniche e acquisti
-[l10n_it_fatturapa_in_rc](l10n_it_fatturapa_in_rc/) | 16.0.1.0.0 | [![sergiocorato](https://github.com/sergiocorato.png?size=30px)](https://github.com/sergiocorato) | Modulo ponte tra e-fattura in acquisto e inversione contabile
+[l10n_it_fatturapa_in_rc](l10n_it_fatturapa_in_rc/) | 16.0.1.0.1 | [![sergiocorato](https://github.com/sergiocorato.png?size=30px)](https://github.com/sergiocorato) | Modulo ponte tra e-fattura in acquisto e inversione contabile
 [l10n_it_fatturapa_out](l10n_it_fatturapa_out/) | 16.0.1.4.1 |  | Emissione fatture elettroniche
 [l10n_it_fatturapa_out_di](l10n_it_fatturapa_out_di/) | 16.0.1.0.2 |  | Dichiarazioni d'intento in fatturapa
 [l10n_it_fatturapa_out_oss](l10n_it_fatturapa_out_oss/) | 16.0.1.0.2 |  | OSS in fatturapa
