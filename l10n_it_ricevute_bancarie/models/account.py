@@ -64,7 +64,7 @@ class AccountMove(models.Model):
                 today = fields.Date.today()
                 open_amount_line_ids = invoice.line_ids.filtered(
                     lambda line, today=today: line.riba
-                    and line.display_type == "payment_term"
+                    and line.account_id.internal_type in ["receivable", "payable"]
                     and line.date_maturity > today
                 )
                 invoice.open_amount = sum(open_amount_line_ids.mapped("balance"))
