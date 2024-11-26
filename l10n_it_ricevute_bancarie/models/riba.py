@@ -6,7 +6,6 @@
 # Copyright (C) 2012-2017 Lorenzo Battistini - Agile Business Group
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from datetime import date
 
 from odoo import _, api, fields, models
 from odoo.exceptions import Warning as UserError
@@ -228,7 +227,7 @@ class RibaList(models.Model):
                 line.state = "draft"
 
     def action_open_lines(self):
-        action = self.env.ref("l10n_it_riba.detail_riba_action").read()[0]
+        action = self.env.ref("l10n_it_ricevute_bancarie.detail_riba_action").read()[0]
         action["domain"] = [("slip_id", "=", self.id)]
         return action
 
@@ -510,7 +509,7 @@ class RibaListLine(models.Model):
                     "journal_id": (
                         riba_line.distinta_id.config_id.settlement_journal_id.id
                     ),
-                    "date": date.today().strftime("%Y-%m-%d"),
+                    "date": riba_line.due_date.strftime("%Y-%m-%d"),
                     "ref": move_ref,
                 }
             )
