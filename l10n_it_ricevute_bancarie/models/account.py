@@ -59,9 +59,9 @@ class AccountMove(models.Model):
                 invoice.is_unsolved = True
 
     def _compute_open_amount(self):
+        today = fields.Date.today()
         for invoice in self:
             if invoice.is_riba_payment:
-                today = fields.Date.today()
                 open_amount_line_ids = invoice.line_ids.filtered(
                     lambda line, today=today: line.riba
                     and line.account_id.internal_type in ["receivable", "payable"]
