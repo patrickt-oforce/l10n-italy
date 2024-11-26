@@ -388,7 +388,7 @@ class RibaListLine(models.Model):
                         line.invoice_number, line.distinta_id.name, line.sequence
                     ),
                     "journal_id": journal.id,
-                    "date": line.distinta_id.registration_date,
+                    "date": line.due_date,
                 }
             )
             to_be_reconciled = self.env["account.move.line"]

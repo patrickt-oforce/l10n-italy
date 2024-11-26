@@ -94,7 +94,11 @@ Questa scheda è presente sia sulla distinta che sulle sue righe.
 La voce di menù 'Presentazione Riba' permette di estrarre le riba fino al
 raggiungimento dell'importo massimo inserito dall'utente. La stessa procedura
 guidata è possibile utilizzarla selezionando i records dalla vista a lista e poi
-cliccare su 'Presentazione Riba' tra le azioni. 
+cliccare su 'Presentazione Riba' tra le azioni.
+
+Nella lista delle fatture è presente una colonna per monitorare l'
+esposizione, cioè l'importo dovuto dal cliente a fronte dell'emissione
+della RiBa non ancora scaduta.
 
 Known issues / Roadmap
 ======================
@@ -134,6 +138,8 @@ Contributors
 
 * `Ooops <https://www.ooops404.com>`_:
   * Giovanni Serra <giovanni@gslab.it>
+
+* Nextev Srl <odoo@nextev.it>
 
 Maintainers
 ~~~~~~~~~~~
