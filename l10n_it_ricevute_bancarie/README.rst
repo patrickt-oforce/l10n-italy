@@ -56,6 +56,10 @@ Nella configurazione delle Ri.Ba. è possibile specificare se si tratti di
 utilizzare al momento dell'accettazione della distinta da parte della banca.
 Tale conto deve essere di tipo 'Crediti' (ad esempio "Ri.Ba. all'incasso",
 eventualmente da creare).
+Selezionando 'Salvo buon fine' è necessario impostare il tipo di
+incasso, immediato o a maturazione valuta: questo influisce sulla gestione
+degli insoluti perchè solo nel caso di incasso immediato vengono stornate
+le registrazioni di presentazione della RiBa.
 
 La configurazione relativa alla fase di accredito, verrà usata nel momento in
 cui la banca accredita l'importo della distinta.
@@ -90,11 +94,23 @@ I possibili stati della distinta sono: *Bozza*, *Accettata*, *Accreditata*,
 Ad ogni passaggio di stato sarà possibile generare le relative registrazioni
 contabili, le quali verranno riepilogate nella scheda «Contabilità».
 Questa scheda è presente sia sulla distinta che sulle sue righe.
+Queste ultime hanno una vista dedicata per facilitare le
+operazioni sul singolo elemento invece che su tutta la distinta.
 
 La voce di menù 'Presentazione Riba' permette di estrarre le riba fino al
 raggiungimento dell'importo massimo inserito dall'utente. La stessa procedura
 guidata è possibile utilizzarla selezionando i records dalla vista a lista e poi
-cliccare su 'Presentazione Riba' tra le azioni. 
+cliccare su 'Presentazione Riba' tra le azioni.
+
+Nella lista delle fatture è presente una colonna per monitorare l'
+esposizione, cioè l'importo dovuto dal cliente a fronte dell'emissione
+della RiBa non ancora scaduta.
+
+In maniera predefinita la data delle registrazioni dei pagamenti viene
+impostata con la data di scadenza della RiBa, ma è possibile modificarla
+successivamente a pagamento effettivamente avvenuto selezionando la
+registrazione dalla vista ed elenco ed eseguendo l'azione "Imposta data
+di pagamento RiBa".
 
 Known issues / Roadmap
 ======================
@@ -134,6 +150,9 @@ Contributors
 
 * `Ooops <https://www.ooops404.com>`_:
   * Giovanni Serra <giovanni@gslab.it>
+  * Eduard Brahas <eduard@ooops404.com>
+
+* Nextev Srl <odoo@nextev.it>
 
 Maintainers
 ~~~~~~~~~~~
