@@ -45,8 +45,9 @@ Configuration
 Nella configurazione delle Ri.Ba. è possibile specificare se si tratti di
 'Salvo buon fine' o 'Al dopo incasso', che hanno un flusso completamente diverso.
 
- - Al dopo incasso: nessuna registrazione verrà effettuata automaticamente e le
-   fatture risulteranno pagate solo al momento dell'effettivo incasso.
+ - Al dopo incasso: le fatture risulteranno pagate all'accettazione;
+   l'incasso potrà essere registrato con una normale riconciliazione bancaria,
+   che andrà a chiudere gli "effetti attivi" aperti all'accettazione
  - Salvo buon fine: le registrazioni generate seguiranno la struttura descritta nel
    documento http://goo.gl/jpRhJp
 
@@ -151,6 +152,9 @@ Contributors
 * `Ooops <https://www.ooops404.com>`_:
   * Giovanni Serra <giovanni@gslab.it>
   * Eduard Brahas <eduard@ooops404.com>
+
+- `TAKOBI <https://takobi.online>`_:
+  - Simone Rubino <sir@takobi.online>
 
 * Nextev Srl <odoo@nextev.it>
 
