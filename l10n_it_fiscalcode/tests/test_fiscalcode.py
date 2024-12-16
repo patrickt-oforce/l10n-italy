@@ -1,7 +1,7 @@
 # Copyright 2024 Simone Rubino - Aion Tech
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from codicefiscale import isvalid
+from codicefiscale import codicefiscale
 
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
@@ -75,6 +75,16 @@ class TestFiscalCode(TransactionCase):
                     "fiscalcode": "AAAMRA00H04H5010",
                 }
             )
+        # Omocode FC - Test if an omocode fiscalcode is considered valid
+        # Fiscalcode in this test is get from
+        # https://pypi.org/project/python-codicefiscale/ examples
+        self.env["res.partner"].create(
+            {
+                "name": "Person",
+                "is_company": False,
+                "fiscalcode": "CCCFBA85D03L21VE",
+            }
+        )
 
     def test_fiscal_code_check_change_to_person(self):
         """
@@ -91,7 +101,7 @@ class TestFiscalCode(TransactionCase):
         )
         partner.fiscalcode = wrong_person_fiscalcode
         # pre-condition
-        self.assertFalse(isvalid(partner.fiscalcode))
+        self.assertFalse(codicefiscale.is_valid(partner.fiscalcode))
 
         # Act
         with self.assertRaises(ValidationError) as ve:
@@ -118,7 +128,7 @@ class TestFiscalCode(TransactionCase):
         )
         partner.fiscalcode = company_vat
         # pre-condition
-        self.assertFalse(isvalid(partner.fiscalcode))
+        self.assertFalse(codicefiscale.is_valid(partner.fiscalcode))
 
         # Act
         with self.assertRaises(ValidationError) as ve:
