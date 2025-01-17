@@ -61971,10 +61971,19 @@ msgstr ""
 
 #. module: l10n_it_intrastat
 #: model:ir.model.fields,field_description:l10n_it_intrastat.field_account_bank_statement_line__intrastat
-#: model:ir.model.fields,field_description:l10n_it_intrastat.field_account_fiscal_position__intrastat
 #: model:ir.model.fields,field_description:l10n_it_intrastat.field_account_move__intrastat
 #: model:ir.model.fields,field_description:l10n_it_intrastat.field_account_payment__intrastat
 msgid "Subject to Intrastat"
+msgstr ""
+
+#. module: l10n_it_intrastat
+#: model:ir.model.fields,field_description:l10n_it_intrastat.field_account_fiscal_position__intrastat_purchase
+msgid "Subject to Intrastat (purchases)"
+msgstr ""
+
+#. module: l10n_it_intrastat
+#: model:ir.model.fields,field_description:l10n_it_intrastat.field_account_fiscal_position__intrastat_sale
+msgid "Subject to Intrastat (sales)"
 msgstr ""
 
 #. module: l10n_it_intrastat
