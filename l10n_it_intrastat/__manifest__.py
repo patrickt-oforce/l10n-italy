@@ -19,6 +19,7 @@
         "uom",
     ],
     "data": [
+        "security/intrastat_rules.xml",
         "security/ir.model.access.csv",
         "security/rules.xml",
         "data/account.intrastat.transaction.nature.csv",
