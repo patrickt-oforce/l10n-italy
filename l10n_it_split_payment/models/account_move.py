@@ -43,11 +43,23 @@ class AccountMove(models.Model):
         return res
 
     def write(self, vals):
-        res = super(AccountMove, self.with_context(check_move_validity=False)).write(
-            vals
-        )
+        res = super().write(vals)
         if self.env.context.get("skip_split_payment_computation"):
             return res
+        self.compute_split_payment()
+        return res
+
+    def copy(self, default=None):
+        if self.split_payment:
+            res = super(AccountMove, self.with_context(check_move_validity=False)).copy(
+                default=default
+            )
+            res.compute_split_payment()
+            return res
+        else:
+            return super().copy(default=default)
+
+    def compute_split_payment(self):
         for move in self:
             if move.split_payment:
                 line_sp = fields.first(
@@ -71,6 +83,3 @@ class AccountMove(models.Model):
                                 move.with_context(
                                     skip_split_payment_computation=True
                                 ).line_ids = [Command.create(write_off_line_vals)]
-        container = {"records": self}
-        self._check_balanced(container)
-        return res
